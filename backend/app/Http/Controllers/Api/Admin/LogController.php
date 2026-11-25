@@ -7,6 +7,7 @@ use App\Models\Billing\CreditNote;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
 use App\Models\LoginHistory;
+use App\Models\News\Article;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -30,6 +31,8 @@ class LogController extends Controller
                 // changes made to one person's account
                 AllowedFilter::callback('subject_user', fn (Builder $q, $v) => $q->where('subject_type', User::class)
                     ->where('subject_id', User::withTrashed()->where('ulid', $v)->value('id'))),
+                AllowedFilter::callback('subject_article', fn (Builder $q, $v) => $q->where('subject_type', Article::class)
+                    ->where('subject_id', Article::withTrashed()->where('ulid', $v)->value('id'))),
                 // everything that happened to one invoice: the invoice, its payments and its credit notes
                 AllowedFilter::callback('subject_invoice', function (Builder $q, $v) {
                     $invoice = Invoice::where('ulid', $v)->first();

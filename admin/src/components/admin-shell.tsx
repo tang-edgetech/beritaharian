@@ -11,6 +11,7 @@ import { initials } from "@/lib/format";
 import {
   Banknote,
   Building2,
+  ClipboardCheck,
   ChartColumn,
   FileMinus,
   FileText,
@@ -19,8 +20,10 @@ import {
   LogOut,
   Menu,
   Moon,
+  Newspaper,
   Settings,
   Sun,
+  Tags,
   Users,
   Wallet,
   type LucideIcon,
@@ -35,7 +38,8 @@ interface NavItem {
   href: string;
   label: string;
   icon: LucideIcon;
-  permission?: string;
+  /** Shown when the person has any of these. */
+  permission?: string | string[];
 }
 
 interface NavSection {
@@ -46,6 +50,14 @@ interface NavSection {
 /** Later phases add News, Directory, Reports and Billing sections here. */
 const NAV: NavSection[] = [
   { title: "Overview", items: [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }] },
+  {
+    title: "Newsroom",
+    items: [
+      { href: "/news", label: "Stories", icon: Newspaper, permission: ["news.write", "news.edit_any", "news.verify", "news.publish"] },
+      { href: "/news/review", label: "Review queue", icon: ClipboardCheck, permission: ["news.verify", "news.publish"] },
+      { href: "/news/categories", label: "Categories", icon: Tags, permission: "news.categories" },
+    ],
+  },
   {
     title: "People",
     items: [
@@ -73,11 +85,15 @@ const NAV: NavSection[] = [
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { can } = useAuth();
+  // the most specific link wins: /news/review lights "Review queue", not "Stories"
+  const activeHref = NAV.flatMap((s) => s.items.map((i) => i.href))
+    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0];
 
   return (
     <nav className="sidebar-nav flex flex-col gap-6" aria-label="Main">
       {NAV.map((section) => {
-        const items = section.items.filter((item) => !item.permission || can(item.permission));
+        const items = section.items.filter((item) => !item.permission || [item.permission].flat().some((p) => can(p)));
         if (!items.length) return null;
         return (
           <div key={section.title} className="sidebar-nav-section flex flex-col gap-1">
@@ -85,7 +101,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               {section.title}
             </p>
             {items.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const active = item.href === activeHref;
               return (
                 <Link
                   key={item.href}

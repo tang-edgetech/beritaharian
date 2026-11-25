@@ -9,7 +9,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(RolesAndPermissionsSeeder::class);
+        $this->call([RolesAndPermissionsSeeder::class, NewsSeeder::class]);
 
         // The first super admin. Credentials come from .env (SEED_ADMIN_*), never from code.
         $email = env('SEED_ADMIN_EMAIL');

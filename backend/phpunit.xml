@@ -32,5 +32,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="WEB_REVALIDATE_URL" value=""/>
+        <env name="WEB_REVALIDATE_SECRET" value=""/>
     </php>
 </phpunit>

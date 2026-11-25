@@ -23,6 +23,14 @@ class RolesAndPermissionsSeeder extends Seeder
         'settings' => [
             'settings.manage' => 'Change site settings',
         ],
+        'news' => [
+            'news.write' => 'Write stories (own drafts)',
+            'news.edit_any' => 'Edit anyone\'s stories',
+            'news.verify' => 'Fact-check and verify stories',
+            'news.publish' => 'Publish, schedule and take down stories',
+            'news.delete' => 'Delete drafts and archived stories',
+            'news.categories' => 'Manage news categories',
+        ],
         'billing' => [
             'billing.view' => 'View invoices, payments, customers and expenses',
             'billing.manage' => 'Prepare invoices, record payments and expenses',
@@ -41,11 +49,11 @@ class RolesAndPermissionsSeeder extends Seeder
     /** Super admin gets everything through a Gate::before check, so it is not listed here. */
     public const ROLES = [
         'super-admin' => ['label' => 'Super admin', 'description' => 'Full access to everything, including settings and roles.', 'system' => true, 'permissions' => []],
-        'admin' => ['label' => 'Admin', 'description' => 'Runs the site day to day: users, settings, billing and logs.', 'system' => false, 'permissions' => ['admin.access', 'users.view', 'users.create', 'users.update', 'users.delete', 'settings.manage', 'audit.view', 'logs.view', 'billing.view', 'billing.manage', 'billing.approve', 'billing.reports']],
+        'admin' => ['label' => 'Admin', 'description' => 'Runs the site day to day: users, settings, news, billing and logs.', 'system' => false, 'permissions' => ['admin.access', 'users.view', 'users.create', 'users.update', 'users.delete', 'settings.manage', 'audit.view', 'logs.view', 'news.write', 'news.edit_any', 'news.publish', 'news.delete', 'news.categories', 'billing.view', 'billing.manage', 'billing.approve', 'billing.reports']],
         'finance' => ['label' => 'Finance', 'description' => 'Prepares invoices, records payments and expenses, prints reports. Confirming payments needs approval rights.', 'system' => false, 'permissions' => ['admin.access', 'billing.view', 'billing.manage', 'billing.reports']],
-        'editor' => ['label' => 'Editor', 'description' => 'Approves and publishes news.', 'system' => false, 'permissions' => ['admin.access']],
-        'journalist' => ['label' => 'Journalist', 'description' => 'Writes news drafts.', 'system' => false, 'permissions' => ['admin.access']],
-        'verifier' => ['label' => 'Verifier', 'description' => 'Fact-checks news and incident reports.', 'system' => false, 'permissions' => ['admin.access']],
+        'editor' => ['label' => 'Editor', 'description' => 'Approves and publishes news.', 'system' => false, 'permissions' => ['admin.access', 'news.write', 'news.edit_any', 'news.publish', 'news.delete', 'news.categories']],
+        'journalist' => ['label' => 'Journalist', 'description' => 'Writes news drafts.', 'system' => false, 'permissions' => ['admin.access', 'news.write']],
+        'verifier' => ['label' => 'Verifier', 'description' => 'Fact-checks news and incident reports.', 'system' => false, 'permissions' => ['admin.access', 'news.verify']],
         'moderator' => ['label' => 'Moderator', 'description' => 'Reviews listings, claims and reviews.', 'system' => false, 'permissions' => ['admin.access', 'users.view']],
         'business-owner' => ['label' => 'Business owner', 'description' => 'Manages their own business listings.', 'system' => true, 'permissions' => []],
         'member' => ['label' => 'Member', 'description' => 'Every registered person. Can review and report.', 'system' => true, 'permissions' => []],

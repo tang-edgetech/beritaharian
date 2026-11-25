@@ -8,10 +8,13 @@ use App\Http\Controllers\Api\Admin\Billing\InvoiceController;
 use App\Http\Controllers\Api\Admin\Billing\PaymentController;
 use App\Http\Controllers\Api\Admin\Billing\ReportController;
 use App\Http\Controllers\Api\Admin\LogController;
+use App\Http\Controllers\Api\Admin\News\ArticleController;
+use App\Http\Controllers\Api\Admin\News\CategoryController;
 use App\Http\Controllers\Api\Admin\RoleController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Public\NewsController;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +25,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('settings/public', [SettingController::class, 'public']);
+
+// Public news for the website and the mobile app: no sign-in, read-only.
+Route::prefix('public')->middleware('throttle:public')->group(function () {
+    Route::get('home', [NewsController::class, 'home']);
+    Route::get('articles', [NewsController::class, 'index']);
+    Route::get('articles/{slug}', [NewsController::class, 'show']);
+    Route::post('articles/{slug}/view', [NewsController::class, 'view'])->middleware('throttle:views');
+    Route::get('categories', [NewsController::class, 'categories']);
+    Route::get('areas', [NewsController::class, 'areas']);
+    Route::get('tags/{slug}', [NewsController::class, 'tag']);
+});
 
 Route::prefix('auth')->middleware('throttle:auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
@@ -84,6 +98,36 @@ Route::middleware(['auth:sanctum', 'abilities:*'])->group(function () {
         Route::middleware('permission:settings.manage')->group(function () {
             Route::get('settings/{group}', [SettingController::class, 'show']);
             Route::put('settings/{group}', [SettingController::class, 'update']);
+        });
+
+        /*
+        | Newsroom: news.write (own drafts), news.edit_any, news.verify, news.publish, news.delete, news.categories.
+        | Each workflow step is checked again in ArticleService, so the rules can't be skipped from the API.
+        */
+        Route::prefix('news')->group(function () {
+            Route::middleware('permission:news.write|news.edit_any|news.verify|news.publish')->group(function () {
+                Route::get('summary', [ArticleController::class, 'summary']);
+                Route::get('articles', [ArticleController::class, 'index']);
+                Route::get('articles/{article}', [ArticleController::class, 'show'])->withTrashed();
+                Route::get('articles/{article}/revisions', [ArticleController::class, 'revisions']);
+                Route::post('articles/{article}/workflow', [ArticleController::class, 'workflow']);
+                Route::get('categories', [CategoryController::class, 'index']);
+                Route::get('areas', [CategoryController::class, 'areas']);
+            });
+            Route::middleware('permission:news.write|news.edit_any')->group(function () {
+                Route::post('articles', [ArticleController::class, 'store']);
+                Route::put('articles/{article}', [ArticleController::class, 'update']);
+                Route::delete('articles/{article}', [ArticleController::class, 'destroy']);
+                Route::post('media', [ArticleController::class, 'upload'])->middleware('throttle:60,1');
+            });
+            Route::post('articles/bulk', [ArticleController::class, 'bulk'])->middleware('permission:news.publish|news.delete');
+            Route::middleware('permission:news.categories')->group(function () {
+                Route::post('categories', [CategoryController::class, 'store']);
+                Route::put('categories/order', [CategoryController::class, 'reorder']);
+                Route::get('categories/{category}', [CategoryController::class, 'show']);
+                Route::put('categories/{category}', [CategoryController::class, 'update']);
+                Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+            });
         });
 
         /*

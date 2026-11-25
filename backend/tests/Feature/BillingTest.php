@@ -38,7 +38,7 @@ class BillingTest extends TestCase
         ])->assertCreated()->json('data.id');
     }
 
-    private function draft(string $customerId, array $lines = null, bool $issue = false): array
+    private function draft(string $customerId, ?array $lines = null, bool $issue = false): array
     {
         return $this->postJson('/api/v1/admin/billing/invoices', [
             'customer_id' => $customerId,

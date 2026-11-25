@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // The public Next.js site, told to refresh its cached pages after news changes.
+    'web' => [
+        'revalidate_url' => env('WEB_REVALIDATE_URL'),
+        'revalidate_secret' => env('WEB_REVALIDATE_SECRET'),
+    ],
+
 ];

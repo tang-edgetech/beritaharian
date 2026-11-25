@@ -47,6 +47,16 @@ return [
             'report' => false,
         ],
 
+        // Public pictures (article covers, listing photos). Lives inside public/ so no storage:link is needed on cPanel.
+        'media' => [
+            'driver' => 'local',
+            'root' => public_path('media'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/media',
+            'visibility' => 'public',
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

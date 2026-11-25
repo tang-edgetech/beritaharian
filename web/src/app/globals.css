@@ -36,3 +36,43 @@
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
   }
 }
+
+/* Story text on the article page: comfortable line length and rhythm for reading on a phone. */
+@layer components {
+  .article-body {
+    @apply flex flex-col gap-5 text-[1.075rem] leading-[1.75] text-santan-900 dark:text-santan-100;
+  }
+  .article-body h2 {
+    @apply mt-4 font-display text-2xl leading-tight font-black text-gula-900 dark:text-coconut;
+  }
+  .article-body h3 {
+    @apply mt-2 font-display text-xl font-extrabold text-gula-900 dark:text-coconut;
+  }
+  .article-body a {
+    @apply font-medium text-pandan-700 underline decoration-pandan-300 underline-offset-4 hover:decoration-pandan-700 dark:text-pandan-300;
+  }
+  .article-body ul {
+    @apply flex list-disc flex-col gap-2 pl-6 marker:text-satay-500;
+  }
+  .article-body ol {
+    @apply flex list-decimal flex-col gap-2 pl-6 marker:font-bold marker:text-satay-500;
+  }
+  .article-body blockquote {
+    @apply border-l-4 border-marigold-400 bg-marigold-50 px-5 py-3 font-display text-lg font-bold text-gula-800 dark:bg-gula-900 dark:text-marigold-100;
+  }
+  .article-body hr {
+    @apply mx-auto my-2 w-24 border-t-4 border-dotted border-marigold-300;
+  }
+  .article-body-figure img {
+    @apply w-full rounded-card;
+  }
+  .article-body-figure figcaption {
+    @apply mt-2 text-sm text-santan-500;
+  }
+  .page-heading {
+    @apply font-display text-3xl leading-tight font-black text-gula-900 sm:text-4xl dark:text-coconut;
+  }
+  .page-lead {
+    @apply max-w-2xl text-santan-600 dark:text-santan-300;
+  }
+}

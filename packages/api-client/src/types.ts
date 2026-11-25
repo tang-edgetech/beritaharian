@@ -319,3 +319,143 @@ export interface FinanceReport {
   tables: ReportTable[];
   customer?: DocumentParty;
 }
+
+/* ------------------------------------------------------------------ news */
+
+export type ArticleStatus = "draft" | "in_review" | "verified" | "scheduled" | "published" | "archived";
+export type TruthLabel = "verified" | "developing" | "corrected";
+export type ArticleAction =
+  | "edit" | "submit" | "send_back" | "verify" | "publish" | "publish_breaking"
+  | "reject" | "archive" | "feature" | "restore" | "delete";
+export type SourceKind = "official" | "witness" | "document" | "media";
+export type CategoryColor = "pandan" | "marigold" | "gula" | "satay" | "santan";
+
+/** A rich-text document from the editor (Tiptap / ProseMirror JSON). */
+export interface RichTextNode {
+  type: string;
+  text?: string;
+  attrs?: Record<string, unknown>;
+  marks?: { type: string; attrs?: Record<string, unknown> }[];
+  content?: RichTextNode[];
+}
+
+export interface MediaItem {
+  id: string;
+  thumb: string | null;
+  card: string | null;
+  large: string | null;
+  width: number | null;
+  height: number | null;
+  alt: string;
+  caption: string | null;
+  credit: string | null;
+}
+
+export interface CategoryRef {
+  slug: string;
+  name: string;
+  color: CategoryColor;
+}
+
+export interface NewsCategory extends CategoryRef {
+  description: string | null;
+  is_active?: boolean;
+  position?: number;
+  articles_count?: number | null;
+}
+
+export interface AreaGroup {
+  slug: string;
+  name: string;
+  children: { slug: string; name: string }[];
+}
+
+export interface ArticleSourceItem {
+  kind: SourceKind;
+  kind_label?: string;
+  label: string;
+  url: string | null;
+}
+
+/** A story as staff see it in the admin. */
+export interface AdminArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  status: ArticleStatus;
+  is_live: boolean;
+  truth_label: TruthLabel | null;
+  is_breaking: boolean;
+  is_featured: boolean;
+  reading_minutes: number;
+  view_count: number;
+  review_note: string | null;
+  archived_reason: string | null;
+  author?: { id: string; name: string };
+  category?: CategoryRef | null;
+  area?: { slug: string; name: string } | null;
+  cover?: MediaItem | null;
+  verified_by?: string | null;
+  published_by?: string | null;
+  verified_at: string | null;
+  published_at: string | null;
+  corrected_at: string | null;
+  created_at: string;
+  updated_at: string;
+  body?: RichTextNode | null;
+  tags?: string[];
+  sources?: ArticleSourceItem[];
+  actions?: ArticleAction[];
+}
+
+export interface ArticleRevision {
+  id: number;
+  editor: string;
+  change_note: string | null;
+  is_public_correction: boolean;
+  snapshot: { title: string; excerpt: string | null; body: RichTextNode | null; category: string | null; area: string | null; tags: string[] };
+  created_at: string;
+}
+
+export interface NewsSummary {
+  to_verify: number;
+  to_publish: number;
+  my_drafts: number;
+  sent_back: number;
+  live_today: number;
+}
+
+/** A story as readers see it on the public site. */
+export interface PublicArticle {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  truth_label: TruthLabel | null;
+  is_breaking: boolean;
+  reading_minutes: number;
+  published_at: string | null;
+  corrected_at: string | null;
+  author: { name: string };
+  category: CategoryRef | null;
+  area: { slug: string; name: string } | null;
+  cover: MediaItem | null;
+  body?: RichTextNode | null;
+  tags?: { name: string; slug: string }[];
+  sources?: { kind: string; label: string; url: string | null }[];
+  corrections?: { note: string | null; at: string | null }[];
+  updated_at?: string | null;
+}
+
+export interface HomeSection {
+  category: CategoryRef;
+  articles: PublicArticle[];
+}
+
+export interface HomeData {
+  lead: PublicArticle | null;
+  today: PublicArticle[];
+  breaking: PublicArticle[];
+  sections: HomeSection[];
+  categories: NewsCategory[];
+}

@@ -134,7 +134,7 @@ class AdminTest extends TestCase
         $token = $this->boss->createToken('test', ['*'])->plainTextToken;
 
         $roles = $this->withToken($token)->getJson('/api/v1/admin/roles')->assertOk()->json('data');
-        $editor = collect($roles)->firstWhere("name", "editor");
+        $editor = collect($roles)->firstWhere('name', 'editor');
         $this->assertSame(2, $editor['users_count']);
 
         $this->withToken($token)->deleteJson('/api/v1/admin/roles/member')

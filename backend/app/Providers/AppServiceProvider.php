@@ -23,5 +23,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Sign-in, sign-up and code endpoints: 20 requests a minute per IP.
         RateLimiter::for('auth', fn (Request $request) => Limit::perMinute(20)->by($request->ip()));
+
+        // Public reading: generous for people, still stops scrapers hammering the API.
+        RateLimiter::for('public', fn (Request $request) => Limit::perMinute(240)->by($request->ip()));
+        RateLimiter::for('views', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
     }
 }

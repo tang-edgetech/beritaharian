@@ -71,6 +71,18 @@ npm run lint
 - **Every tab is a route:** `/users/{id}/security`, `/settings/audit`, `/account/security`.
 - **Listings:** use `admin/src/components/data-listing/data-listing.tsx`. It gives search, filters, sorting, bulk actions, per-page and pagination, all kept in the address bar.
 
+## News
+
+- **Newsroom** (admin › Newsroom): journalists write drafts, a verifier fact-checks (never their own story), an editor publishes or schedules. Breaking news can go live first as "Developing". Changes to a live story need a note; ticking "This corrects a fact" shows the note under the story.
+- **Roles:** Journalist (`news.write`), Verifier (`news.verify`), Editor (`news.edit_any`, `news.publish`, `news.delete`, `news.categories`).
+- **Pictures** are saved as three WebP sizes in `backend/public/media/` (back it up with the database).
+- **Public site caching:** pages are cached for a minute. After a story changes, the API asks the site to refresh straight away. Set the same secret in `web/.env.local` (`REVALIDATE_SECRET`) and `backend/.env` (`WEB_REVALIDATE_SECRET`), and point `WEB_REVALIDATE_URL` at the site's `/api/revalidate`.
+- **Sample stories for local testing** (never in production):
+
+```powershell
+php artisan db:seed --class=DemoNewsSeeder
+```
+
 ## Finance (invoices and bookkeeping)
 
 In the admin under **Finance**. Fill in **Settings › Company** (name, SSM number, address, bank account) before issuing real invoices; those details print on every document.
