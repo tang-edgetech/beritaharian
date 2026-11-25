@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Melaka Daily Blueprint</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky chapter index on the left, long-form reading column on the right; stacks on phones.
+   Palette drawn from Peranakan floor tiles in Jonker Walk shophouses: jade, indigo, marigold. */
+:root {
+  --paper: #f6f7f4;
+  --surface: #ffffff;
+  --ink: #18222b;
+  --ink-soft: #4b5a66;
+  --line: #d9e0dc;
+  --jade: #0f7a6c;
+  --jade-tint: #e2f1ed;
+  --indigo: #2c3e8c;
+  --marigold: #c98a12;
+  --marigold-tint: #fbf0d9;
+  --danger: #b4372f;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #10171c; --surface: #172027; --ink: #e6ece9; --ink-soft: #a3b1ad; --line: #2a3740;
+    --jade: #4cc3ae; --jade-tint: #16302c; --indigo: #9fb0ff; --marigold: #f0b443; --marigold-tint: #33280f; --danger: #ff8a80;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #10171c; --surface: #172027; --ink: #e6ece9; --ink-soft: #a3b1ad; --line: #2a3740;
+  --jade: #4cc3ae; --jade-tint: #16302c; --indigo: #9fb0ff; --marigold: #f0b443; --marigold-tint: #33280f; --danger: #ff8a80;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 15px/1.65 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.page-shell { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding-block: 40px 80px; }
+.chapter-index { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.chapter-index-label { font: 500 11px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+.chapter-index a { color: var(--ink-soft); text-decoration: none; padding: 5px 10px; border-left: 2px solid var(--line); }
+.chapter-index a:hover, .chapter-index a:focus-visible { color: var(--jade); border-left-color: var(--jade); outline: none; }
+main { min-width: 0; display: flex; flex-direction: column; gap: 64px; }
+
+.page-hero { display: flex; flex-direction: column; gap: 16px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+.page-hero-eyebrow { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--jade); }
+.page-hero h1 { font: 700 clamp(34px, 5vw, 56px)/1.05 var(--font-display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+.page-hero h1 span { color: var(--marigold); }
+.page-hero p { max-width: 66ch; margin: 0; color: var(--ink-soft); font-size: 17px; }
+.pillar-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 8px; }
+.pillar-item { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); }
+.pillar-item strong { font: 600 16px var(--font-display); }
+.pillar-item span { color: var(--ink-soft); font-size: 13.5px; }
+.pillar-item.is-news { border-top: 4px solid var(--indigo); }
+.pillar-item.is-directory { border-top: 4px solid var(--marigold); }
+.pillar-item.is-civic { border-top: 4px solid var(--jade); }
+
+.doc-section { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 24px; }
+.section-tag { font: 500 11px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--marigold); }
+.doc-section h2 { font: 700 30px/1.15 var(--font-display); margin: 0; text-wrap: balance; }
+.doc-section h3 { font: 600 18px/1.3 var(--font-display); margin: 12px 0 0; }
+.doc-section p, .doc-section li { max-width: 72ch; }
+.doc-section p { margin: 0; }
+.doc-section ul, .doc-section ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+code, .mono { font-family: var(--font-mono); font-size: .88em; }
+code { background: var(--jade-tint); padding: 1px 5px; border-radius: 3px; }
+
+.decision-box { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px; background: var(--jade-tint); border-left: 4px solid var(--jade); }
+.decision-box.is-warning { background: var(--marigold-tint); border-left-color: var(--marigold); }
+.decision-box strong { font-family: var(--font-display); font-size: 16px; }
+
+.diagram-frame { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); padding: 20px; }
+.diagram-caption { font: 12px var(--font-mono); color: var(--ink-soft); margin-top: -8px; }
+
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); background: var(--paper); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.is-yes { color: var(--jade); font-weight: 600; }
+td.is-no { color: var(--ink-soft); }
+td.is-own { color: var(--marigold); font-weight: 600; }
+
+.code-block { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); padding: 16px 18px; font: 13px/1.6 var(--font-mono); white-space: pre; margin: 0; }
+.code-label { font: 500 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.split-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.split-grid > div { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.do-label { color: var(--jade); }
+.dont-label { color: var(--danger); }
+
+.phase-list { display: flex; flex-direction: column; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+.phase-item { position: relative; padding: 0 0 22px 24px; display: flex; flex-direction: column; gap: 4px; }
+.phase-item::before { content: ""; position: absolute; left: -7px; top: 5px; width: 12px; height: 12px; background: var(--paper); border: 2px solid var(--jade); border-radius: 50%; }
+.phase-item strong { font: 600 16px var(--font-display); }
+.phase-item span { color: var(--ink-soft); font-size: 14px; max-width: 72ch; }
+
+.question-list { counter-reset: q; list-style: none; padding: 0 !important; }
+.question-list li { counter-increment: q; position: relative; padding: 14px 16px 14px 52px; background: var(--surface); border: 1px solid var(--line); }
+.question-list li::before { content: counter(q); position: absolute; left: 16px; top: 13px; font: 700 18px var(--font-display); color: var(--marigold); }
+
+@media (max-width: 900px) {
+  .page-shell { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 24px 64px; }
+  .chapter-index { position: static; flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  .chapter-index-label { width: 100%; margin: 0; }
+  .chapter-index a { border: 1px solid var(--line); padding: 4px 10px; }
+  .pillar-row, .split-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+
+<div class="page-shell">
+  <nav class="chapter-index" aria-label="Chapters">
+    <div class="chapter-index-label">Chapters</div>
+    <a href="#stack">Stack decisions</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#mindmap">Mind map</a>
+    <a href="#roles">Roles &amp; access</a>
+    <a href="#flows">Key flows</a>
+    <a href="#data">Data model</a>
+    <a href="#routes">Routes</a>
+    <a href="#ui-rules">UI rules</a>
+    <a href="#naming">Class naming</a>
+    <a href="#layout">Layout &amp; journeys</a>
+    <a href="#design">Design direction</a>
+    <a href="#hosting">Hosting &amp; scale</a>
+    <a href="#trust">Legal &amp; evidence</a>
+    <a href="#verify-pay">Verification &amp; payment</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#questions">Decisions</a>
+  </nav>
+
+  <main>
+    <header class="page-hero">
+      <div class="page-hero-eyebrow">Product blueprint · Draft 3 · 25 Nov 2026</div>
+      <h1>News, directory and civic reports for <span>Melaka</span></h1>
+      <p>One platform that tells locals and tourists what is happening, where to go, and what has been verified as true. This page sets out the stack, how the parts fit together, the data model, and the decisions still open.</p>
+      <div class="pillar-row">
+        <div class="pillar-item is-news"><strong>Daily news</strong><span>Editorial articles, alerts and live updates, fact-checked before publishing.</span></div>
+        <div class="pillar-item is-directory"><strong>Business directory</strong><span>Yellow-pages listings from hawker stalls to hotels, with reviews and paid pins.</span></div>
+        <div class="pillar-item is-civic"><strong>Civic reports</strong><span>Public incident reports, verified by staff, exportable as evidence for PDRM.</span></div>
+      </div>
+    </header>
+
+    <!-- STACK -->
+    <section class="doc-section" id="stack">
+      <div class="section-tag">Stack decisions</div>
+      <h2>Three apps, one API</h2>
+      <p>Laravel is the only thing that talks to MySQL. The public site, the admin panel and the future mobile app all consume the same versioned REST API (<code>/api/v1</code>). This is what makes the mobile app cheap later: no new backend.</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Part</th><th>Choice</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Public site</td><td>Next.js (App Router) + Tailwind</td><td>Server rendering for Google indexing of news and listings; ISR so popular pages are cached HTML.</td></tr>
+            <tr><td>Admin panel</td><td>Next.js + Tailwind + <strong>shadcn/ui</strong></td><td>See the decision below. Runs as its own Node.js app on cPanel.</td></tr>
+            <tr><td>Backend</td><td>Laravel (latest) + MySQL 8</td><td>API only. Sanctum auth, queues, scheduler, policies, events.</td></tr>
+            <tr><td>Future mobile</td><td>Expo (React Native)</td><td>Shares TypeScript types, validation schemas and API client with both Next.js apps.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="decision-box">
+        <strong>Recommendation: shadcn/ui instead of Ant Design for the admin</strong>
+        <p>Ant Design v5 styles itself with CSS-in-JS. That is exactly where class names like <code>.css-dev-only-do-not-override-u6izyw</code> and <code>.css-var-_R_5b_</code> come from. You can turn hashing off, but you will keep fighting it, and its look is instantly recognisable.</p>
+        <p>shadcn/ui is copied into your own codebase as plain React + Tailwind files built on Radix primitives. Every class is a Tailwind utility or a name you wrote. It covers dialogs, tooltips, dropdowns, tabs, forms, command palette and data tables, and it has no fixed visual identity, so the Dribbble-led design is yours to apply.</p>
+        <p>Companion libraries: <code>TanStack Table</code> (sorting, filtering, bulk selection, pagination), <code>dnd-kit</code> (drag to reorder), <code>Sonner</code> (toasts), <code>React Hook Form</code> + <code>Zod</code> (forms), <code>Lucide</code> (icons), <code>TanStack Query</code> (API cache).</p>
+      </div>
+      <div class="decision-box is-warning">
+        <strong>Why not the admin in Laravel (Filament / Blade)?</strong>
+        <p>It is faster to build, but you would maintain two UI stacks, two design systems and two naming conventions. With both front ends in Next.js, components such as the listing table, filter bar and rating stars are written once in a shared package.</p>
+      </div>
+
+      <h3>Repository layout</h3>
+<pre class="code-block">beritaharian/
+├── backend/            Laravel API  (api.domain.my)
+├── web/                Next.js public site  (domain.my)
+├── admin/              Next.js admin panel  (admin.domain.my)
+├── packages/
+│   ├── ui/             shared components, design tokens
+│   ├── api-client/     typed fetch client generated from the API spec
+│   └── validation/     Zod schemas shared by web, admin, mobile
+└── docs/</pre>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section class="doc-section" id="architecture">
+      <div class="section-tag">Architecture</div>
+      <h2>How requests move through the system</h2>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  subgraph clients["Clients"]
+    viewer["Public site<br/>Next.js"]
+    admin["Admin panel<br/>Next.js"]
+    mobile["Mobile app<br/>Expo, later"]
+  end
+  subgraph api["Laravel API"]
+    auth["Auth<br/>Sanctum + 2FA"]
+    modules["Modules<br/>News, Directory, Reports,<br/>Reviews, Billing, Users"]
+    policy["Policies &amp; roles"]
+    queue["Queue workers<br/>images, mail, exports"]
+  end
+  subgraph data["Storage"]
+    mysql[("MySQL 8<br/>relational + JSON")]
+    cache[("Cache<br/>Redis or file")]
+    files[("Media storage<br/>local disk to S3-compatible")]
+  end
+  pay["Payment gateway<br/>FPX / cards / e-wallet"]
+  maps["Maps &amp; geocoding"]
+  mail["Email / WhatsApp / push"]
+
+  viewer --> auth
+  admin --> auth
+  mobile --> auth
+  auth --> policy --> modules
+  modules --> mysql
+  modules --> cache
+  modules --> files
+  modules --> queue
+  queue --> mail
+  modules --> pay
+  modules --> maps
+</pre>
+      </div>
+    </section>
+
+    <!-- MINDMAP -->
+    <section class="doc-section" id="mindmap">
+      <div class="section-tag">Mind map</div>
+      <h2>Everything the platform does</h2>
+      <div class="diagram-frame">
+<pre class="mermaid">
+mindmap
+  root((Melaka platform))
+    News
+      Articles and categories
+      Breaking alerts
+      Scheduled publishing
+      Revisions and sources
+      Fact-check status badge
+      Multi-language
+    Directory
+      Businesses and branches
+      Sectors and attributes
+      Opening hours and map
+      Claim my business
+      Offers and events
+      Search near me
+    Community
+      Reviews and ratings
+      Photos with reviews
+      Owner replies
+      Bookmarks and follows
+      Report abuse
+    Civic reports
+      Submit incident
+      Evidence upload
+      Staff verification
+      Public alert
+      Evidence pack for PDRM
+    Monetisation
+      Plans and subscriptions
+      Pinned posts
+      Shout-outs
+      Featured placement
+      Invoices and receipts
+    Admin
+      User management
+      Roles and permissions
+      Moderation queues
+      Settings
+      Audit and logs
+      Reports and analytics
+</pre>
+      </div>
+    </section>
+
+    <!-- ROLES -->
+    <section class="doc-section" id="roles">
+      <div class="section-tag">Roles &amp; access</div>
+      <h2>Who can do what</h2>
+      <p>Roles are bundles of permissions (via <code>spatie/laravel-permission</code>), so new roles can be created in the admin without code changes. "Own" means only records they created or businesses they manage.</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Permission</th><th>Super admin</th><th>Editor</th><th>Journalist</th><th>Verifier</th><th>Moderator</th><th>Business owner</th><th>Member</th></tr></thead>
+          <tbody>
+            <tr><td>Write news</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-own">Own</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td></tr>
+            <tr><td>Publish news</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td></tr>
+            <tr><td>Fact-check / verify</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td></tr>
+            <tr><td>Submit incident</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td></tr>
+            <tr><td>Export evidence pack</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td></tr>
+            <tr><td>Moderate reviews</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td></tr>
+            <tr><td>Manage business listing</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-yes">Yes</td><td class="is-own">Own</td><td class="is-no">No</td></tr>
+            <tr><td>Buy pin / shout-out</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-own">Own</td><td class="is-no">No</td></tr>
+            <tr><td>Write review</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td><td class="is-yes">Yes</td></tr>
+            <tr><td>Manage users &amp; roles</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td></tr>
+            <tr><td>Settings &amp; audit log</td><td class="is-yes">Yes</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td><td class="is-no">No</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A person can hold several roles. A journalist can also own a business; a verifier can never verify their own submission (enforced in policy, not just the UI).</p>
+      <p><strong>Finance</strong> (added with billing): views billing, prepares invoices, records payments and expenses, prints reports. Confirming payments, voiding invoices and issuing credit notes need the separate approval permission, held by admins and super admins.</p>
+    </section>
+
+    <!-- FLOWS -->
+    <section class="doc-section" id="flows">
+      <div class="section-tag">Key flows</div>
+      <h2>The five journeys that matter most</h2>
+
+      <h3>1. News from draft to homepage</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  draft["Journalist writes draft"] --> submit["Submit for review"]
+  submit --> check{"Verifier checks facts<br/>and sources"}
+  check -- "Needs changes" --> draft
+  check -- "Verified" --> edit{"Editor approves"}
+  edit -- "Rejected" --> archive["Archived with reason"]
+  edit -- "Approved" --> when{"Publish now?"}
+  when -- "Yes" --> live["Live on site<br/>badge: Verified"]
+  when -- "Schedule" --> sched["Scheduled"] --> live
+  live --> correct["Later correction<br/>creates a revision + public note"]
+</pre>
+      </div>
+      <p>Breaking news can skip the verifier with an "Unverified, developing" badge, which is removed once a verifier signs it off. Every state change is written to the audit log.</p>
+
+      <h3>2. Incident report to evidence pack</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart TD
+  member["Member submits incident<br/>location, time, description, files"] --> hash["System stores original files<br/>SHA-256 hash, EXIF, upload IP, time"]
+  hash --> triage{"Verifier triage"}
+  triage -- "Spam or duplicate" --> reject["Rejected<br/>member told in plain words"]
+  triage -- "Needs more info" --> ask["Ask reporter"] --> triage
+  triage -- "Credible" --> investigate["Cross-check<br/>other reports, sources, site visit"]
+  investigate --> verdict{"Verdict"}
+  verdict -- "Verified" --> publish["Publish as public alert<br/>faces and plates blurred"]
+  verdict -- "Unconfirmed" --> hold["Kept private"]
+  verdict -- "Needs police" --> pack["Generate evidence pack<br/>PDF + original files + hash manifest"]
+  pack --> handover["Handover logged<br/>officer, station, report number"]
+</pre>
+      </div>
+
+      <h3>3. Business listing, claim and paid pin</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  start{"Listing exists?"} -- "No" --> create["Owner creates listing"]
+  start -- "Yes" --> claim["Claim this business<br/>SSM number or phone OTP"]
+  create --> review["Moderator review"]
+  claim --> review
+  review -- "Approved" --> active["Listing live<br/>Free plan"]
+  active --> upgrade["Choose plan<br/>Basic, Pro, Premium"]
+  upgrade --> pay["Pay via gateway"]
+  pay -- "Success" --> perks["Plan perks active<br/>photos, offers, analytics"]
+  perks --> pin["Book pin or shout-out<br/>slot, area, dates"]
+  pin --> queue["Shown in pinned slots<br/>order set by drag and drop"]
+  pay -- "Failed" --> retry["Toast: payment did not go through"]
+</pre>
+      </div>
+
+      <h3>4. Review after a visit</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  find["Search or browse"] --> visit["Open business page"]
+  visit --> write["Write review<br/>stars, text, photos, visit date"]
+  write --> auto{"Automatic checks<br/>bad words, rate limit, duplicate"}
+  auto -- "Flagged" --> mod["Moderator queue"]
+  auto -- "Clean" --> shown["Review shown"]
+  mod --> shown
+  shown --> reply["Owner replies"]
+  shown --> helpful["Others mark helpful or report"]
+</pre>
+      </div>
+
+      <h3>5. Sign in with 2FA</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  login["Email + password<br/>or Google"] --> ok{"Correct?"}
+  ok -- "No" --> fail["Count attempt<br/>lock after 5"]
+  ok -- "Yes" --> tfa{"2FA on?"}
+  tfa -- "No" --> forced{"Role requires 2FA?"}
+  forced -- "Yes" --> setup["Set up authenticator app"] --> inapp["Signed in"]
+  forced -- "No" --> inapp
+  tfa -- "Yes" --> code["Enter 6-digit code<br/>or recovery code"] --> inapp
+  inapp --> log["Login history<br/>device, IP, time"]
+</pre>
+      </div>
+    </section>
+
+    <!-- DATA -->
+    <section class="doc-section" id="data">
+      <div class="section-tag">Data model</div>
+      <h2>Relational core, document-shaped details</h2>
+      <p>MySQL 8 gives us both worlds. Things we join, filter and count (users, businesses, articles, ratings) are proper columns with foreign keys. Things that vary by type are JSON documents inside the row, so a hotel and a hawker stall share one <code>businesses</code> table without 80 empty columns.</p>
+      <div class="split-grid">
+        <div>
+          <div class="code-label">Object-oriented: Eloquent models</div>
+          <ul>
+            <li>Every table maps to one model class with relations, casts and policies.</li>
+            <li>Polymorphic relations: one <code>media</code>, <code>reviews</code>, <code>verifications</code>, <code>reports</code> and <code>pins</code> table serves many owners.</li>
+            <li>Public IDs are ULIDs, so URLs never expose row counts.</li>
+            <li>Soft deletes and timestamps on every business table.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="code-label">Document-oriented: JSON columns</div>
+          <ul>
+            <li><code>title</code>, <code>body</code>, <code>name</code> stored as <code>{"en":…, "ms":…, "zh":…}</code>. English at launch; BM and Chinese are filled in later with no schema change.</li>
+            <li><code>businesses.attributes</code> holds sector-specific fields, validated by a JSON schema stored on the sector.</li>
+            <li>Fields we filter on (e.g. <code>halal</code>) get a generated column + index.</li>
+            <li><code>settings.value</code>, <code>media.meta</code>, <code>evidence.exif</code> are documents.</li>
+          </ul>
+        </div>
+      </div>
+<pre class="code-block">// sectors.attribute_schema  (Restaurant)          // businesses.attributes  (Restoran Nyonya Makan)
+{                                                  {
+  "halal":      { "type": "boolean" },               "halal": false,
+  "cuisine":    { "type": "array", "enum": [...] },  "cuisine": ["peranakan", "malay"],
+  "price_band": { "type": "integer", "min": 1 },     "price_band": 2,
+  "seats":      { "type": "integer" }                "seats": 40
+}                                                  }</pre>
+
+      <h3>Identity &amp; access</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+erDiagram
+  users ||--|| user_profiles : has
+  users ||--o{ login_histories : records
+  users ||--o{ social_accounts : links
+  users }o--o{ roles : "model_has_roles"
+  roles }o--o{ permissions : "role_has_permissions"
+  users {
+    bigint id PK
+    char ulid UK
+    string name
+    string email UK
+    string phone UK
+    string password
+    text two_factor_secret
+    json two_factor_recovery_codes
+    timestamp two_factor_confirmed_at
+    enum status "active, suspended, banned"
+    timestamp email_verified_at
+    timestamp deleted_at
+  }
+  user_profiles {
+    bigint user_id FK
+    string display_name
+    string avatar_path
+    enum user_type "local, tourist"
+    string preferred_locale
+    json notification_prefs
+  }
+  login_histories {
+    bigint user_id FK
+    string ip
+    string user_agent
+    boolean succeeded
+    timestamp created_at
+  }
+</pre>
+      </div>
+
+      <h3>News</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+erDiagram
+  users ||--o{ articles : authors
+  categories ||--o{ articles : groups
+  categories ||--o{ categories : parent
+  articles ||--o{ article_revisions : versions
+  articles ||--o{ article_sources : cites
+  articles }o--o{ tags : taggables
+  areas ||--o{ articles : "happens in"
+  articles {
+    bigint id PK
+    char ulid UK
+    bigint author_id FK
+    bigint category_id FK
+    bigint area_id FK
+    json title "per locale"
+    json slug "per locale"
+    json excerpt
+    json body "rich text blocks"
+    enum status "draft, in_review, verified, scheduled, published, archived"
+    enum truth_label "verified, developing, corrected"
+    boolean is_breaking
+    timestamp published_at
+    int view_count
+  }
+  categories {
+    bigint id PK
+    bigint parent_id FK
+    json name
+    string slug
+    int position "drag and drop order"
+  }
+  article_revisions {
+    bigint article_id FK
+    bigint editor_id FK
+    json snapshot
+    string change_note
+  }
+  article_sources {
+    bigint article_id FK
+    string label
+    string url
+    enum kind "official, witness, document, media"
+  }
+</pre>
+      </div>
+
+      <h3>Directory &amp; reviews</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+erDiagram
+  sectors ||--o{ sectors : parent
+  sectors ||--o{ businesses : classifies
+  businesses ||--o{ business_locations : "has branches"
+  businesses ||--o{ business_members : "managed by"
+  users ||--o{ business_members : manages
+  business_locations ||--o{ business_hours : opens
+  business_locations ||--o{ reviews : receives
+  areas ||--o{ business_locations : "located in"
+  users ||--o{ reviews : writes
+  reviews ||--o| review_replies : "owner reply"
+  reviews ||--o{ review_votes : "helpful votes"
+  businesses ||--o{ offers : runs
+  businesses {
+    bigint id PK
+    char ulid UK
+    bigint sector_id FK
+    json name
+    string slug UK
+    json description
+    string ssm_number
+    json attributes "sector-specific document"
+    json contacts "phone, whatsapp, web, socials"
+    enum status "pending, active, suspended"
+    boolean is_claimed
+    decimal rating_avg "cached"
+    int rating_count "cached"
+  }
+  business_locations {
+    bigint id PK
+    bigint business_id FK
+    bigint area_id FK
+    string address
+    point geo "SPATIAL INDEX"
+    boolean is_primary
+  }
+  sectors {
+    bigint id PK
+    bigint parent_id FK
+    json name
+    json attribute_schema
+    int position
+  }
+  reviews {
+    bigint id PK
+    bigint user_id FK
+    bigint business_location_id FK
+    tinyint rating "1 to 5"
+    json sub_ratings "service, value, cleanliness"
+    text body
+    date visited_on
+    enum status "visible, held, removed"
+  }
+</pre>
+      </div>
+
+      <h3>Civic reports &amp; verification</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+erDiagram
+  users ||--o{ incidents : reports
+  incidents ||--o{ incident_evidences : attaches
+  incidents ||--o{ incident_updates : timeline
+  incidents ||--o{ evidence_handovers : "handed to"
+  areas ||--o{ incidents : "happens in"
+  verifications }o--|| users : "done by"
+  incidents {
+    bigint id PK
+    char reference_no UK "MLK-2026-000123"
+    bigint reporter_id FK
+    bigint incident_type_id FK
+    bigint area_id FK
+    point geo
+    timestamp occurred_at
+    text description
+    boolean is_anonymous_public
+    enum status "new, triage, investigating, verified, unconfirmed, rejected, closed"
+    enum severity "low, medium, high, critical"
+  }
+  incident_evidences {
+    bigint incident_id FK
+    string disk_path
+    string mime
+    char sha256 "integrity"
+    json exif
+    string uploader_ip
+    timestamp captured_at
+  }
+  verifications {
+    bigint id PK
+    string verifiable_type "Article, Incident, Business"
+    bigint verifiable_id
+    bigint verifier_id FK
+    enum verdict "verified, false, misleading, unconfirmed"
+    json checklist
+    text notes
+  }
+  evidence_handovers {
+    bigint incident_id FK
+    bigint exported_by FK
+    string agency "PDRM IPD Melaka Tengah"
+    string officer_name
+    string police_report_no
+    char manifest_sha256
+  }
+</pre>
+      </div>
+
+      <h3>Subscriptions, pins &amp; shared tables</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+erDiagram
+  plans ||--o{ subscriptions : "subscribed as"
+  businesses ||--o{ subscriptions : holds
+  subscriptions ||--o{ invoices : bills
+  invoices ||--o{ payments : "paid by"
+  invoices ||--|{ invoice_lines : lists
+  invoices ||--o{ credit_notes : "corrected by"
+  payments ||--o| receipts : confirms
+  businesses ||--o{ placements : books
+  plans {
+    bigint id PK
+    json name
+    int price_sen "MYR in sen"
+    enum interval "month, year"
+    json features "max_photos, pins_per_month, analytics"
+    int position
+  }
+  subscriptions {
+    bigint business_id FK
+    bigint plan_id FK
+    enum status "trialing, active, past_due, cancelled"
+    timestamp current_period_end
+  }
+  placements {
+    bigint id PK
+    string pinnable_type "Article, Business, Offer"
+    bigint pinnable_id
+    enum slot "home_top, category_top, area_top, shoutout_strip"
+    bigint area_id FK
+    timestamp starts_at
+    timestamp ends_at
+    int position "drag and drop"
+  }
+  media {
+    string mediable_type
+    bigint mediable_id
+    string collection "cover, gallery, avatar"
+    string disk_path
+    json meta "width, height, blurhash, alt"
+    int position
+  }
+  settings {
+    string group "general, security, mail"
+    string key
+    json value
+  }
+  activity_log {
+    bigint causer_id
+    string subject_type
+    bigint subject_id
+    string event
+    json properties "old and new values"
+    string ip
+  }
+</pre>
+      </div>
+      <p class="diagram-caption">Also planned: <span class="mono">areas</span> (Melaka Tengah, Alor Gajah, Jasin → mukim → locality), <span class="mono">bookmarks</span>, <span class="mono">follows</span>, <span class="mono">notifications</span>, <span class="mono">reports</span> (abuse flags, polymorphic), <span class="mono">incident_types</span>, <span class="mono">offers</span>, <span class="mono">pages</span> (static CMS).</p>
+    </section>
+
+    <!-- ROUTES -->
+    <section class="doc-section" id="routes">
+      <div class="section-tag">Routes</div>
+      <h2>Every page and tab has its own address</h2>
+      <p>Tabs are routes too (<code>/settings/security</code>, not <code>/settings#security</code>), so a link always reopens the same view and the back button goes to the parent route.</p>
+      <div class="split-grid">
+        <div>
+          <div class="code-label">Public site</div>
+<pre class="code-block">/                         home
+/news                     latest
+/news/[category]
+/news/[category]/[slug]
+/alerts                   verified civic alerts
+/directory
+/directory/[sector]
+/directory/[sector]/[slug]
+/directory/[sector]/[slug]/reviews
+/search?q=&amp;near=&amp;open-now=
+/areas/[area]
+/report                   submit incident
+/account
+/account/reports
+/account/reviews
+/account/saved
+/account/security
+/business                 owner dashboard
+/business/[slug]/listing
+/business/[slug]/plan
+/business/[slug]/pins
+/business/[slug]/invoices
+/business/[slug]/invoices/[number]
+/login  /register  /forgot-password</pre>
+        </div>
+        <div>
+          <div class="code-label">Admin panel</div>
+<pre class="code-block">/dashboard
+/news
+/news/create
+/news/[id]/edit
+/news/[id]/revisions
+/news/categories
+/verification/queue
+/verification/[type]/[id]
+/incidents
+/incidents/[ref]
+/incidents/[ref]/evidence
+/incidents/[ref]/handover
+/directory/businesses
+/directory/businesses/[id]/[tab]
+/directory/sectors
+/directory/claims
+/reviews/moderation
+/billing/plans
+/billing/subscriptions
+/billing/placements
+/billing/invoices                       built
+/billing/invoices/create
+/billing/invoices/[id]/[tab]           invoice, payments, credit-notes, activity
+/billing/invoices/[id]/edit            drafts only
+/billing/invoices/[id]/record-payment  ?kind=refund for refunds
+/billing/invoices/[id]/credit-note
+/billing/invoices/[id]/void
+/billing/payments                      bulk confirm
+/billing/payments/[id]
+/billing/credit-notes
+/billing/credit-notes/[id]
+/billing/customers
+/billing/customers/create
+/billing/customers/[id]/[tab]          details, invoices, statement
+/billing/expenses
+/billing/expenses/create
+/billing/expenses/[id]
+/billing/reports/[type]                sales, collections, outstanding,
+                                       income-expenses, expenses, tax
+/settings/company                      SSM, tax, bank details
+/settings/billing                      numbering, tax, wording
+/users
+/users/[id]/[tab]
+/roles
+/roles/[id]
+/settings/general
+/settings/security
+/settings/logs
+/settings/audit
+/settings/extra</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- UI RULES -->
+    <section class="doc-section" id="ui-rules">
+      <div class="section-tag">UI rules</div>
+      <h2>Standards every screen follows</h2>
+      <h3>Listing pages</h3>
+      <p>One reusable <code>DataListing</code> component drives every list in the admin, so all of them behave the same:</p>
+      <ul>
+        <li>Checkbox column with select page / select all matching, and a bulk action bar that appears on selection.</li>
+        <li>Search box, filter drawer (status, date range, area, author…), active filters shown as removable chips.</li>
+        <li>Sortable column headers, column show/hide, items per page (10, 25, 50, 100), pagination with total count.</li>
+        <li>Filters, sort and page are kept in the URL query string, so a filtered list can be bookmarked or shared.</li>
+        <li>Row actions as icon buttons with a tooltip on hover (Edit, View, Duplicate, Delete).</li>
+        <li>Export to CSV for the current filter. Empty and loading states designed, not blank.</li>
+      </ul>
+      <h3>Confirmations, toasts and language</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Action</th><th>Confirmation</th><th>Toast on success</th><th>Toast on failure</th></tr></thead>
+          <tbody>
+            <tr><td>Delete news</td><td>"Delete this article? It moves to the bin for 30 days."</td><td>Article moved to the bin.</td><td>We couldn't delete this article. Please try again.</td></tr>
+            <tr><td>Bulk publish (12)</td><td>"Publish 12 articles now?"</td><td>12 articles are now live.</td><td>3 articles need a verifier first. The other 9 are live.</td></tr>
+            <tr><td>Reject incident</td><td>Reason required</td><td>Report closed. The reporter has been told why.</td><td>Please give a reason before closing.</td></tr>
+            <tr><td>Export evidence</td><td>Officer name and police report number required</td><td>Evidence pack ready to download.</td><td>Some files are still processing. Try again in a minute.</td></tr>
+            <tr><td>Turn off 2FA</td><td>Re-enter password</td><td>Two-step sign-in is off. We recommend turning it back on.</td><td>That password is not correct.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The API returns a machine code (<code>ARTICLE_NEEDS_VERIFICATION</code>) and the front end maps it to a sentence in the user's language. Stack traces and SQL errors never reach the screen; they go to the system log.</p>
+      <h3>Pages over popups</h3>
+      <p>Create and edit forms are full pages with their own route. Popups are used only for confirmations and quick pickers. Reordering (categories, sectors, plans, pinned slots, gallery photos) uses drag and drop with a save toast.</p>
+      <h3>Settings</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Tab</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td>General</td><td>Site name, logo, favicon, languages, default language, timezone (Asia/Kuala_Lumpur), contact details, social links, SEO defaults, maintenance mode, email sender.</td></tr>
+            <tr><td>Security</td><td>2FA (own account), require 2FA per role, password rules, session timeout, failed login lockout, active sessions with "sign out other devices", admin IP allowlist.</td></tr>
+            <tr><td>Logs</td><td>System errors, failed background jobs, login history, email delivery log.</td></tr>
+            <tr><td>Audit</td><td>Who changed what and when, with old and new values. Filter by person, module, date. Read-only, cannot be deleted from the UI.</td></tr>
+            <tr><td>Extra</td><td>Integrations (maps key, payment gateway, captcha, analytics), backups, cache clear, storage usage, API tokens for the mobile app.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- NAMING -->
+    <section class="doc-section" id="naming">
+      <div class="section-tag">Class naming</div>
+      <h2>Readable class names next to Tailwind</h2>
+      <p>Each element carries one human name that says what it is, followed by Tailwind utilities. Names are kebab-case: block, then part (<code>news-card</code>, <code>news-card-title</code>). States use an <code>is-</code> or <code>has-</code> prefix. IDs only for anchors and form fields.</p>
+      <div class="split-grid">
+        <div>
+          <div class="code-label do-label">Do</div>
+<pre class="code-block">&lt;article class="news-card is-breaking
+    flex flex-col gap-3 rounded-lg"&gt;
+  &lt;img class="news-card-cover
+      aspect-video object-cover" /&gt;
+  &lt;span class="news-card-badge
+      text-xs uppercase"&gt;Verified&lt;/span&gt;
+  &lt;h3 class="news-card-title
+      text-lg font-semibold"&gt;...&lt;/h3&gt;
+  &lt;footer class="news-card-meta
+      flex gap-2 text-sm"&gt;...&lt;/footer&gt;
+&lt;/article&gt;
+
+&lt;input id="search-keyword"
+  class="search-bar-input ..." /&gt;</pre>
+        </div>
+        <div>
+          <div class="code-label dont-label">Don't</div>
+<pre class="code-block">&lt;div class="css-u6izyw"&gt;
+&lt;div class="css-var-_R_5b_"&gt;
+&lt;div class="NewsCard_title__x8Kd2"&gt;
+&lt;div class="news_card__title"&gt;
+&lt;div style="margin-top:12px"&gt;
+&lt;div id="r:5b:"&gt;</pre>
+          <p>Next.js CSS Modules also hash names (<code>NewsCard_title__x8Kd2</code>), so we use plain global component CSS with Tailwind's <code>@layer components</code> instead of modules.</p>
+        </div>
+      </div>
+      <p>Components take props for variants (<code>&lt;NewsCard variant="compact" /&gt;</code>) and render the matching human class, so the same card works in the homepage grid, sidebar and search results.</p>
+    </section>
+
+    <!-- LAYOUT -->
+    <section class="doc-section" id="layout">
+      <div class="section-tag">Layout &amp; journeys</div>
+      <h2>Kopitiam Board for news, Peta Melaka for everything with a place</h2>
+      <p>Chosen from the <a href="https://claude.ai/artifact/7QgW2KMUZKGuyg1TskkSCo">five layout directions</a>, picking the best direction for each journey rather than one look for everything.</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Journey</th><th>Direction</th><th>What the reader sees</th></tr></thead>
+          <tbody>
+            <tr><td>Quick daily news</td><td>Kopitiam Board</td><td>Home opens on one lead story, a numbered "Hari ini" list beside it, then rows by topic. A small "Near you" map strip leads into the map pages.</td></tr>
+            <tr><td>Places &amp; reviews</td><td>Peta Melaka</td><td>Map with a list beside it on desktop. Filters for sector, area and open now. Each pin opens a card, then the full listing page.</td></tr>
+            <tr><td>Civic reports</td><td>Peta Melaka</td><td>Verified alerts shown as pins and a list. Reporting starts from the map: drop a pin or use "my location", then add photos and details.</td></tr>
+            <tr><td>Phone and later the app</td><td>Peta Melaka</td><td>Map on the top half with a card sheet that pulls up. Bottom tab bar: Today · Places · Report (+) · Map · Me.</td></tr>
+            <tr><td>Admin panel</td><td>Current dark sidebar</td><td>Grouped links, profile (avatar, name, role) at the bottom opening My profile, sign-out icon beside it with a confirmation. Verifier and report queues use a list-and-detail split with a map preview.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Maps: free first, Google Maps when it pays for itself</h3>
+      <ul>
+        <li><strong>Now:</strong> Leaflet with OpenStreetMap tiles. Free, no key, many custom pins, pin clustering, "near me". The free Google Maps embed is not used because it shows only one place or one search per map.</li>
+        <li><strong>If traffic grows before revenue:</strong> switch the tile source to a hosted free plan (for example MapTiler), since the public OpenStreetMap tile server is meant for light use.</li>
+        <li><strong>Later:</strong> Google Maps JavaScript API and Places, set in Settings › Extra. All map code sits behind one <code>MapView</code> component and one geocoding service, so the switch touches those two places only.</li>
+        <li>Locations are stored as plain latitude and longitude (spatial columns), never tied to a provider's place ID, so data survives a provider change.</li>
+      </ul>
+    </section>
+
+    <!-- DESIGN -->
+    <section class="doc-section" id="design">
+      <div class="section-tag">Design direction</div>
+      <h2>Your moodboard leads, not a template</h2>
+      <p>The look should come from references you choose. Proposed process:</p>
+      <ol>
+        <li>You collect 5 to 10 shots you like from Dribbble, Behance, Mobbin (real app screens), Refero, Godly, Awwwards, Land-book or Httpster. Useful searches: "editorial news web", "city guide app", "local directory", "magazine layout", "admin dashboard data table".</li>
+        <li>For each shot, note what you like: the type, the colour, the grid, the card style, the motion.</li>
+        <li>I turn that into design tokens (colour, type scale, spacing, radius, shadow) in <code>packages/ui</code>, plus a component sheet you approve before any page is built.</li>
+      </ol>
+      <p>Ideas specific to Melaka to bring into it: Peranakan tile patterns as section dividers, the colours of Jonker Street shophouse fronts, the Melaka River at night for a dark theme, and area chips named the way locals say them (Bandar Hilir, Klebang, Ayer Keroh).</p>
+    </section>
+
+    <!-- HOSTING -->
+    <section class="doc-section" id="hosting">
+      <div class="section-tag">Hosting &amp; scale</div>
+      <h2>XAMPP today, cPanel tomorrow, room to grow</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Concern</th><th>Plan</th></tr></thead>
+          <tbody>
+            <tr><td>Local development</td><td>XAMPP for Apache + MySQL + PHP; <code>npm run dev</code> for both Next.js apps; <code>php artisan queue:work</code> in a terminal.</td></tr>
+            <tr><td>Public site on cPanel</td><td>Needs cPanel's "Setup Node.js App" (Passenger). Ask your host to confirm it is enabled and what Node version and RAM you get.</td></tr>
+            <tr><td>Admin on cPanel</td><td>Runs as a second Node.js app (its pages like <code>/users/{id}/profile</code> are per-record, so plain static files can't serve them).</td></tr>
+            <tr><td>Queues &amp; scheduler</td><td>One cron entry every minute: <code>php artisan schedule:run</code>, which also drains the queue.</td></tr>
+            <tr><td>Search</td><td>Start with MySQL FULLTEXT + spatial distance queries. Move to Meilisearch via Laravel Scout when on a VPS.</td></tr>
+            <tr><td>Images</td><td>Resized to WebP in the queue (thumb, card, full). Later move media to S3-compatible storage + CDN.</td></tr>
+            <tr><td>Caching</td><td>ISR for public pages, Laravel cache for API responses, cached rating averages. Redis if the host offers it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="decision-box is-warning">
+        <strong>About "dozens of thousands of users"</strong>
+        <p>MySQL and Laravel handle that comfortably. The weak point is shared cPanel hosting: limited Node processes, CPU throttling, no Redis, no long-running workers. Plan to move to a VPS (still with cPanel/WHM if you like) before a big tourism season or a viral news day. The code above needs no change for that move.</p>
+      </div>
+    </section>
+
+    <!-- TRUST -->
+    <section class="doc-section" id="trust">
+      <div class="section-tag">Legal &amp; evidence</div>
+      <h2>Handling reports and personal data responsibly</h2>
+      <ul>
+        <li><strong>PDPA 2010:</strong> privacy notice and consent at registration and report submission, data export and account deletion on request, retention periods per data type.</li>
+        <li><strong>Evidence integrity:</strong> original uploads are never edited. Every file gets a SHA-256 hash at upload; published versions are separate blurred copies. The export includes a manifest so police can confirm nothing changed.</li>
+        <li><strong>Police handover:</strong> the platform prepares an evidence pack and logs the handover. A direct link into PDRM systems would need an agreement with them, so treat that as a later conversation.</li>
+        <li><strong>Defamation risk:</strong> incidents naming people or businesses stay private until verified; public alerts describe events, not accusations.</li>
+        <li><strong>Reviews:</strong> owners can reply and report a review, but cannot delete it. Paid businesses get no ranking boost in reviews, only in clearly labelled "Sponsored" slots.</li>
+      </ul>
+    </section>
+
+    <!-- VERIFY & PAY -->
+    <section class="doc-section" id="verify-pay">
+      <div class="section-tag">Verification &amp; payment</div>
+      <h2>Verified accounts, proof of visit, bank transfer first</h2>
+
+      <h3>Every account is verified at sign-up</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  reg["Register<br/>name, email or phone, password"] --> pick{"Verify by"}
+  pick -- "Email, free" --> mail["6-digit code by email<br/>valid 10 minutes"]
+  pick -- "WhatsApp, later" --> wa["Code via WhatsApp<br/>Cloud API template"]
+  pick -- "SMS, future" --> sms["Code via SMS provider"]
+  mail --> enter["Enter code"]
+  wa --> enter
+  sms --> enter
+  enter -- "Correct" --> ok["Account active<br/>can review and report"]
+  enter -- "Wrong 5 times" --> wait["Locked 15 minutes"]
+  ok --> addsecond["Add second channel later<br/>from account settings"]
+</pre>
+      </div>
+      <p>The code is sent through one <code>OtpChannel</code> interface with an email driver now and WhatsApp and SMS drivers later, so adding a channel is a new class plus a setting, not a rewrite. Columns: <code>email_verified_at</code>, <code>phone_verified_at</code> on <code>users</code>, and an <code>otp_codes</code> table (hashed code, channel, purpose, expires_at, attempts).</p>
+      <div class="decision-box is-warning">
+        <strong>WhatsApp is not free for one-time codes</strong>
+        <p>The official WhatsApp Business Cloud API from Meta charges per authentication message, and needs a verified Meta Business account and an approved message template. The "free WhatsApp API" libraries online work by automating a personal WhatsApp login, which breaks WhatsApp's terms and gets numbers banned, so we won't use them. Launch with email codes (free), and add WhatsApp when the per-message cost is acceptable.</p>
+      </div>
+
+      <h3>Proof of visit for reviews</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  write["Write review"] --> proof{"Attach proof"}
+  proof -- "Receipt photo" --> receipt["Stored privately<br/>never shown publicly"]
+  proof -- "Check-in" --> geo["Location within 150 m<br/>of the branch at the time"]
+  receipt --> mod["Moderator confirms"]
+  geo --> auto["Auto-confirmed"]
+  mod -- "Confirmed" --> live["Review live<br/>badge: Verified visit"]
+  auto --> live
+  mod -- "Not valid" --> back["Returned with a reason"]
+</pre>
+      </div>
+      <p>New table <code>visit_proofs</code> (review_id, kind, private file path, geo point, distance, verified_by, status). Receipts can contain names and card digits, so they sit on a private disk and are deleted 90 days after the review is confirmed.</p>
+
+      <h3>Payments: manual bank transfer now, gateways later</h3>
+      <div class="diagram-frame">
+<pre class="mermaid">
+flowchart LR
+  choose["Business picks plan or pin"] --> inv["Invoice created<br/>status: awaiting payment"]
+  inv --> method{"Payment method"}
+  method -- "Bank transfer / DuitNow" --> details["Shows bank account<br/>and invoice number as reference"]
+  details --> slip["Business uploads transfer slip"]
+  slip --> fin["Finance staff checks bank statement"]
+  fin -- "Matched" --> paid["Invoice paid<br/>plan or pin activated, receipt emailed"]
+  fin -- "Not found" --> ask["Business asked to re-check"]
+  method -- "Gateway, later" --> gw["Billplz / ToyyibPay / Stripe / Fiuu<br/>FPX, cards, TNG eWallet, GrabPay"]
+  gw -- "Webhook: success" --> paid
+</pre>
+      </div>
+      <p>Payments go through one <code>PaymentDriver</code> interface. <code>ManualBankTransfer</code> is the first driver. Each gateway is added later as another driver and switched on in Settings › Extra; invoices, subscriptions and pins don't change. Touch 'n Go eWallet and GrabPay are reached through a gateway that supports them, not connected one by one.</p>
+<pre class="code-block">payment_methods   code, name, driver, is_active, position, config (json, encrypted)
+invoices          number "CS-INV-2026-000042", business_id, status, issued_at, due_at,
+                  subtotal_sen, tax_sen, total_sen, paid_sen, currency "MYR",
+                  seller (json snapshot: name, SSM no., TIN, SST no., address, bank),
+                  buyer  (json snapshot: name, SSM/IC, TIN, address, email),
+                  einvoice (json: MyInvois UUID, status, submitted_at, null until required)
+invoice_lines     invoice_id, description, quantity, unit_price_sen, tax_code, tax_rate,
+                  tax_sen, line_total_sen, billable_type, billable_id (plan, placement)
+payments          invoice_id, kind (payment | refund), method, reference, amount_sen, paid_on,
+                  status (pending | confirmed | rejected), slip_path, recorded_by, confirmed_by,
+                  receipt_number "CS-RCP-2026-000031" / "CS-RFD-…" (given on confirmation)
+credit_notes      number "CS-CN-2026-000004", invoice_id, reason, description, subtotal_sen,
+                  tax_rate, tax_sen, total_sen, seller and buyer snapshots
+billing_customers name, SSM/IC no., TIN, SST no., contact, email, phone, address (json)
+expenses          number "CS-EXP-2026-000012", spent_on, category, payee, description,
+                  amount_sen, tax_sen, total_sen, private attachment (supplier's bill)
+number_sequences  type, year, next_value   (gap-free numbering, locked per issue)</pre>
+
+      <div class="decision-box">
+        <strong>Built ahead of schedule: invoicing and light bookkeeping</strong>
+        <p>The Billing phase is in the admin panel now (Finance section), so every ringgit is recorded properly from day one. It is not a full accounting system; it keeps formal records and prints them.</p>
+        <ul>
+          <li><strong>Customers</strong> with registration, tax and address details; archive instead of delete.</li>
+          <li><strong>Invoices:</strong> draft, issue (number given and locked), partly paid, paid, credited, void. Overdue is worked out from the due date. Drag lines to reorder; copy an invoice as a new draft.</li>
+          <li><strong>Payments and refunds:</strong> recorded against an invoice, checked against the bank statement, then confirmed. Confirming gives the receipt or refund-voucher number. Bulk confirm on the Payments page.</li>
+          <li><strong>Credit notes</strong> reduce an issued invoice; a refund follows if the customer had already paid.</li>
+          <li><strong>Expenses</strong> with the supplier's bill attached, kept privately.</li>
+          <li><strong>Reports:</strong> Sales, Money received, Outstanding (by how late), Income and expenses (cash basis, by month and category), Expenses, Tax charged, and a Statement of account per customer. Each shows on screen, prints, downloads as an A4 PDF and exports as CSV for the accountant.</li>
+          <li><strong>Formal documents:</strong> invoice (or tax invoice once SST is on), official receipt, refund voucher, credit note. Each has the logo, company details, both parties, amount in words, page numbers, and VOID / PAID stamps where they apply.</li>
+          <li><strong>Who can do what:</strong> <code>billing.view</code>, <code>billing.manage</code> (prepare), <code>billing.approve</code> (confirm payments, void, credit notes), <code>billing.reports</code>. A new Finance role prepares and prints but needs an approver to confirm money, so no one person both records and approves.</li>
+          <li><strong>Settings:</strong> Company tab (name, SSM, TIN, SST, address, bank) and Billing tab (number prefixes, payment terms, tax on/off and rate, standard wording, expense categories).</li>
+        </ul>
+      </div>
+
+      <h3>Billing in the app, bookkeeping in accounting software</h3>
+      <div class="split-grid">
+        <div>
+          <div class="code-label">Cendol Satay does</div>
+          <ul>
+            <li>Company details in Settings › Company (SSM no., TIN, SST no. once registered, address, bank account), printed on every document.</li>
+            <li>Invoices created from plans and pins; quick manual invoices for one-off deals.</li>
+            <li>Running numbers that never skip. An issued invoice can't be edited: fix it with a credit note or void it, and the void stays on record.</li>
+            <li>Statuses: draft, issued, partly paid, paid, credited, void; overdue shown from the due date.</li>
+            <li>Payment check against the bank statement, then an official receipt. (Built.)</li>
+            <li>PDF invoices, receipts, refund vouchers, credit notes, statements and reports. (Built.) Business owners download theirs from the public site in Phase 5.</li>
+            <li>Expenses with bills attached, income and expenses report, every action in the audit log. (Built.)</li>
+            <li>CSV export for the accountant (built); emailing documents and overdue reminders come with Phase 5.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="code-label">Accounting software does</div>
+          <ul>
+            <li>General ledger, chart of accounts, expenses.</li>
+            <li>Bank reconciliation, profit and loss, balance sheet.</li>
+            <li>Service Tax returns once registered.</li>
+            <li>LHDN MyInvois submission, or Cendol Satay submits directly once the threshold applies.</li>
+            <li>Malaysian options: Bukku, SQL Account, AutoCount, Xero. Pick the one your accountant uses.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="decision-box is-warning">
+        <strong>Receive money through a registered business</strong>
+        <p>Before the first paid customer: register a sole proprietorship (or a partnership, if there are co-founders) with SSM through EzBiz Online, open a business current account in that name, and declare the profit as business income in the owner's personal tax return. Move to a Sdn Bhd when starting officially, because a news and user-content platform carries defamation and PDPA risk that a company keeps away from personal assets. Confirm Service Tax, e-invoicing timing and audit needs with a Malaysian accountant or company secretary.</p>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section class="doc-section" id="roadmap">
+      <div class="section-tag">Roadmap</div>
+      <h2>Build order</h2>
+      <div class="phase-list">
+        <div class="phase-item"><strong>Phase 0 · Foundation (built)</strong><span>Repo, provisional design tokens from the logo, Laravel API, sign-in with email codes and 2FA, users and roles, settings, audit and sign-in logs, the shared listing component. Still to do: public sign-up pages and tokens from your moodboard.</span></div>
+        <div class="phase-item"><strong>Phase 1 · News</strong><span>Articles, categories, revisions, verification workflow, Kopitiam Board home page with the bottom tab bar on phones, public news pages, search.</span></div>
+        <div class="phase-item"><strong>Phase 2 · Directory</strong><span>Sectors with attribute schemas, businesses and branches, Peta Melaka map pages on Leaflet and OpenStreetMap, near-me search, claims, reviews and moderation.</span></div>
+        <div class="phase-item"><strong>Phase 3 · Civic reports</strong><span>Report from the map, evidence storage, verifier queue as list and detail with map preview, public alerts, evidence packs.</span></div>
+        <div class="phase-item"><strong>Phase 4 · Billing (built early)</strong><span>Customers, invoices with running numbers, payment checks, receipts and refund vouchers, credit notes, expenses with bills, six finance reports plus customer statements, A4 PDFs and CSV, Company and Billing settings, Finance role. Still to come with Phase 5: emailing documents, overdue reminders, business owners' invoice page, MyInvois submission when required. Real invoices wait for the SSM registration and business bank account.</span></div>
+        <div class="phase-item"><strong>Phase 5 · Monetisation</strong><span>Plans, subscriptions, pins and shout-outs with scheduling, all billed through Phase 4. Payment gateways (FPX, cards, TNG eWallet, GrabPay) added as drivers.</span></div>
+        <div class="phase-item"><strong>Phase 6 · Mobile</strong><span>Expo app on the same API, using the Peta Melaka phone layout: news feed, directory map, report with camera and GPS, push notifications. Google Maps upgrade when revenue allows.</span></div>
+      </div>
+    </section>
+
+    <!-- QUESTIONS -->
+    <section class="doc-section" id="questions">
+      <div class="section-tag">Decisions</div>
+      <h2>Decided so far, and what's still open</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Topic</th><th>Decision</th></tr></thead>
+          <tbody>
+            <tr><td>Brand</td><td>Cendol Satay. Pin logo confirmed; the bowl and masthead concepts stay in <code>brand/</code> as backups. Domain not fixed yet. SSM and MyIPO checks happen last, just before production.</td></tr>
+            <tr><td>Names on content</td><td>Journalists' names are always shown on their articles. Members can tick "Hide my name" when sending an incident report: the public sees "A Cendol Satay reader", while verifiers and admins still see who sent it (needed for follow-up and the police evidence pack).</td></tr>
+            <tr><td>Business entity</td><td>Sole proprietorship with SSM while starting; Sdn Bhd later when going official.</td></tr>
+            <tr><td>Languages</td><td>English default. BM and Chinese added later.</td></tr>
+            <tr><td>Payments</td><td>Manual bank transfer with slip upload at launch. Gateways (FPX, cards, TNG eWallet, GrabPay) added later as drivers.</td></tr>
+            <tr><td>Hosting</td><td>cPanel with Terminal and Setup Node.js App available. Public site and admin each run as a Node.js app.</td></tr>
+            <tr><td>Layout</td><td>Kopitiam Board for daily news; Peta Melaka for places, reviews, reports and the phone app. Admin keeps the dark sidebar with the profile at the bottom.</td></tr>
+            <tr><td>Maps</td><td>Free Leaflet + OpenStreetMap now, Google Maps API once the business earns money.</td></tr>
+            <tr><td>Billing</td><td>Built: every transaction recorded with formal documents, reports, PDFs and CSV. Full bookkeeping (ledger, tax returns) stays with the accountant's software, fed by the CSV export.</td></tr>
+            <tr><td>Reviews</td><td>Proof of visit required: receipt photo or on-site check-in.</td></tr>
+            <tr><td>Accounts</td><td>Every account verified at sign-up. Email now, WhatsApp next, SMS later.</td></tr>
+            <tr><td>Admin stack</td><td>Next.js + Tailwind + shadcn/ui.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ol class="question-list">
+        <li><strong>Design references.</strong> 5 to 10 shots from Dribbble, Mobbin, Behance or similar, with a note on what you like in each.</li>
+        <li><strong>Before taking the first payment.</strong> SSM registration, business bank account, then fill in Settings › Company. Domain and MyIPO checks before production.</li>
+        <li><strong>Accounting software.</strong> Which package your accountant uses, so the CSV export can match its import format.</li>
+      </ol>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });</script>
+</body>
+</html>

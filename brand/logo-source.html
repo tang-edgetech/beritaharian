@@ -1,0 +1,165 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cendol Satay logo source</title>
+<!--
+  Render with: logo-source.html?concept=a|b|c&variant=badge|transparent&mode=full|icon
+  a = bowl (cendol bowl with satay sticks)
+  b = masthead (newspaper-style stacked wordmark with a satay skewer rule)
+  c = pin (map pin holding a top-down cendol bowl)
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Fredoka:wght@700&family=Nunito:wght@900&display=block">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  .logo-canvas { display: none; width: 250px; height: 250px; }
+  .show-a #concept-a, .show-b #concept-b, .show-c #concept-c { display: block; }
+  .is-transparent .logo-badge { display: none; }
+  .is-icon .logo-wordmark { display: none; }
+
+  /* concept a: bowl */
+  #concept-a .logo-badge { fill: #1f6b4a; }
+  #concept-a .logo-wordmark { fill: #fff4dc; font-family: "Fredoka", "Segoe UI", sans-serif; font-weight: 700; }
+  .is-transparent #concept-a .logo-wordmark { fill: #4a2511; }
+
+  /* concept b: masthead */
+  #concept-b .logo-badge { fill: #4a2511; }
+  #concept-b .masthead-word { font-family: "Archivo Black", "Arial Black", sans-serif; }
+  #concept-b .masthead-top { fill: #fff4dc; }
+  #concept-b .masthead-bottom { fill: #6cc04a; }
+  #concept-b .masthead-kicker { fill: #f3c98b; font-family: "Nunito", "Segoe UI", sans-serif; font-weight: 900; }
+  .is-transparent #concept-b .masthead-top { fill: #4a2511; }
+  .is-transparent #concept-b .masthead-bottom { fill: #2f7d3a; }
+  .is-transparent #concept-b .masthead-kicker { fill: #9a5324; }
+
+  /* concept c: pin */
+  #concept-c .logo-badge { fill: #f0b443; }
+  #concept-c .pin-wordmark { fill: #4a2511; font-family: "Nunito", "Segoe UI", sans-serif; font-weight: 900; }
+  #concept-c .pin-tagline { fill: #4a2511; font-family: "Nunito", "Segoe UI", sans-serif; font-weight: 900; }
+</style>
+</head>
+<body>
+
+<!-- CONCEPT A: BOWL -->
+<svg id="concept-a" class="logo-canvas" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg">
+  <rect class="logo-badge" x="0" y="0" width="250" height="250" rx="44"/>
+  <g class="logo-icon">
+    <g class="satay-stick">
+      <line x1="138" y1="100" x2="200" y2="30" stroke="#ecd09c" stroke-width="4" stroke-linecap="round"/>
+      <g transform="translate(166,68.5) rotate(-48.5)"><rect x="-8.5" y="-7.5" width="17" height="15" rx="5" fill="#c8601f"/><path d="M-3 -6 L-3 6 M3 -6 L3 6" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+      <g transform="translate(176.5,56.6) rotate(-48.5)"><rect x="-8.5" y="-7.5" width="17" height="15" rx="5" fill="#d8742c"/><path d="M-3 -6 L-3 6 M3 -6 L3 6" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+      <g transform="translate(187,44.7) rotate(-48.5)"><rect x="-8.5" y="-7.5" width="17" height="15" rx="5" fill="#c8601f"/><path d="M-3 -6 L-3 6 M3 -6 L3 6" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+    </g>
+    <g class="satay-stick">
+      <line x1="112" y1="100" x2="50" y2="30" stroke="#ecd09c" stroke-width="4" stroke-linecap="round"/>
+      <g transform="translate(84,68.5) rotate(48.5)"><rect x="-8.5" y="-7.5" width="17" height="15" rx="5" fill="#d8742c"/><path d="M-3 -6 L-3 6 M3 -6 L3 6" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+      <g transform="translate(73.5,56.6) rotate(48.5)"><rect x="-8.5" y="-7.5" width="17" height="15" rx="5" fill="#c8601f"/><path d="M-3 -6 L-3 6 M3 -6 L3 6" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+      <g transform="translate(63,44.7) rotate(48.5)"><rect x="-8.5" y="-7.5" width="17" height="15" rx="5" fill="#d8742c"/><path d="M-3 -6 L-3 6 M3 -6 L3 6" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+    </g>
+    <path d="M72 124 C72 86 100 68 125 68 C150 68 178 86 178 124 Z" fill="#fffaf0" stroke="#4a2511" stroke-width="3"/>
+    <path d="M86 92 C98 74 152 74 164 92 C161 96 158 95 156 100 C154 105 150 105 149 99 C147 95 140 96 136 96 C130 96 127 103 122 103 C117 103 117 96 112 95 C105 94 100 100 95 98 C90 96 89 95 86 92 Z" fill="#7b3f1a"/>
+    <g fill="none" stroke="#3f9a3a" stroke-width="5" stroke-linecap="round">
+      <path d="M80 112 q5 -6 10 0 t10 0"/>
+      <path d="M106 111 q5 -6 10 0 t10 0 t10 0"/>
+      <path d="M146 112 q5 -6 10 0 t10 0"/>
+    </g>
+    <rect x="58" y="118" width="134" height="12" rx="6" fill="#f3c98b" stroke="#4a2511" stroke-width="3"/>
+    <path d="M64 130 H186 C184 152 160 170 125 170 C90 170 66 152 64 130 Z" fill="#9a5324" stroke="#4a2511" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M80 140 C86 152 100 160 114 162" fill="none" stroke="#f3c98b" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    <rect x="104" y="168" width="42" height="9" rx="3" fill="#4a2511"/>
+  </g>
+  <text class="logo-wordmark" x="125" y="216" text-anchor="middle" font-size="30" letter-spacing=".5">Cendol Satay</text>
+</svg>
+
+<!-- CONCEPT B: MASTHEAD -->
+<svg id="concept-b" class="logo-canvas" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg">
+  <rect class="logo-badge" x="0" y="0" width="250" height="250" rx="44"/>
+  <text class="masthead-kicker" x="125" y="64" text-anchor="middle" font-size="11" letter-spacing="4">MELAKA &#183; DAILY</text>
+  <text class="masthead-word masthead-top" x="125" y="112" text-anchor="middle" font-size="40" letter-spacing="1">CENDOL</text>
+  <g class="satay-rule">
+    <line x1="30" y1="130" x2="222" y2="130" stroke="#ecd09c" stroke-width="4" stroke-linecap="round"/>
+    <path d="M222 127 L230 130 L222 133 Z" fill="#ecd09c"/>
+    <g transform="translate(68,130)"><rect x="-11" y="-9" width="22" height="18" rx="6" fill="#c8601f"/><path d="M-4 -7 L-4 7 M4 -7 L4 7" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+    <g transform="translate(96,130)"><rect x="-11" y="-9" width="22" height="18" rx="6" fill="#d8742c"/><path d="M-4 -7 L-4 7 M4 -7 L4 7" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+    <g transform="translate(124,130)"><rect x="-11" y="-9" width="22" height="18" rx="6" fill="#c8601f"/><path d="M-4 -7 L-4 7 M4 -7 L4 7" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+    <g transform="translate(152,130)"><rect x="-11" y="-9" width="22" height="18" rx="6" fill="#d8742c"/><path d="M-4 -7 L-4 7 M4 -7 L4 7" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+    <g transform="translate(180,130)"><rect x="-11" y="-9" width="22" height="18" rx="6" fill="#c8601f"/><path d="M-4 -7 L-4 7 M4 -7 L4 7" stroke="#7d3210" stroke-width="2" stroke-linecap="round"/></g>
+  </g>
+  <text class="masthead-word masthead-bottom" x="125" y="180" text-anchor="middle" font-size="40" letter-spacing="1">SATAY</text>
+</svg>
+
+<!-- CONCEPT C: PIN -->
+<svg id="concept-c" class="logo-canvas" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg">
+  <rect class="logo-badge" x="0" y="0" width="250" height="250" rx="44"/>
+  <g class="logo-icon">
+    <path d="M125 168 C110 145 67 118 67 82 A58 58 0 1 1 183 82 C183 118 140 145 125 168 Z" fill="#1f6b4a" stroke="#4a2511" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="125" cy="82" r="40" fill="#fffaf0" stroke="#9a5324" stroke-width="6"/>
+    <g fill="none" stroke="#3f9a3a" stroke-width="4.5" stroke-linecap="round">
+      <path d="M119 56 q3 -4 6 0 t6 0" transform="rotate(0 125 82)"/>
+      <path d="M119 56 q3 -4 6 0 t6 0" transform="rotate(60 125 82)"/>
+      <path d="M119 56 q3 -4 6 0 t6 0" transform="rotate(120 125 82)"/>
+      <path d="M119 56 q3 -4 6 0 t6 0" transform="rotate(180 125 82)"/>
+      <path d="M119 56 q3 -4 6 0 t6 0" transform="rotate(240 125 82)"/>
+      <path d="M119 56 q3 -4 6 0 t6 0" transform="rotate(300 125 82)"/>
+    </g>
+    <!-- two satay skewers in a V (peace sign), built by script so the angle can be changed -->
+    <g id="pin-sticks"></g>
+    <!-- gula Melaka syrup in the centre, on top so the sticks look pushed into it -->
+    <circle cx="125" cy="82" r="15" fill="#7b3f1a"/>
+    <path d="M118 77 a8 8 0 0 1 9 -3" fill="none" stroke="#f3c98b" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g class="logo-wordmark">
+    <text class="pin-wordmark" x="125" y="207" text-anchor="middle" font-size="31">cendol satay</text>
+    <text class="pin-tagline" x="125" y="228" text-anchor="middle" font-size="10" letter-spacing="2.5" opacity=".75">MELAKA NEWS &amp; PLACES</text>
+  </g>
+</svg>
+
+<script>
+  var params = new URLSearchParams(location.search);
+  var root = document.documentElement;
+  var concept = params.get("concept") || "a";
+  var isIcon = params.get("mode") === "icon";
+  root.classList.add("show-" + concept);
+  if (params.get("variant") === "transparent") root.classList.add("is-transparent");
+  if (isIcon) root.classList.add("is-icon");
+
+  // Concept C: two skewers from the bowl centre.
+  // spread = angle between the two sticks; tilt = how far the pair leans right from upright (both rotate together).
+  function buildPinSticks(spreadDeg, tiltDeg) {
+    var holder = document.getElementById("pin-sticks");
+    var radii = [44, 64, 84], tip = 103, meatLength = 18, meatWidth = 15;
+    [1, -1].forEach(function (side, s) {
+      var lean = (tiltDeg + side * spreadDeg / 2) * Math.PI / 180;
+      var dx = Math.sin(lean), dy = -Math.cos(lean);
+      var angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      var parts = ["<line x1=\"125\" y1=\"82\" x2=\"" + (125 + dx * tip) + "\" y2=\"" + (82 + dy * tip) + "\" stroke=\"#ecd09c\" stroke-width=\"4\" stroke-linecap=\"round\"/>"];
+      radii.forEach(function (r, i) {
+        var fill = (i + s) % 2 ? "#d8742c" : "#c8601f";
+        parts.push("<g transform=\"translate(" + (125 + dx * r) + " " + (82 + dy * r) + ") rotate(" + angle + ")\">" +
+          "<rect x=\"" + (-meatLength / 2) + "\" y=\"" + (-meatWidth / 2) + "\" width=\"" + meatLength + "\" height=\"" + meatWidth + "\" rx=\"5\" fill=\"" + fill + "\" stroke=\"#4a2511\" stroke-width=\"1.5\"/>" +
+          "<path d=\"M-3.5 -5 L-3.5 5 M3.5 -5 L3.5 5\" stroke=\"#7d3210\" stroke-width=\"2\" stroke-linecap=\"round\"/></g>");
+      });
+      holder.insertAdjacentHTML("beforeend", "<g class=\"satay-stick\">" + parts.join("") + "</g>");
+    });
+  }
+  // final logo: sticks 30° apart, leaning 45° right
+  if (concept === "c") buildPinSticks(params.has("spread") ? parseFloat(params.get("spread")) : 30, params.has("tilt") ? parseFloat(params.get("tilt")) : 45);
+
+  // Fit the icon into its area: above the wordmark, or the whole square when icon-only.
+  var fitBoxes = {
+    a: isIcon ? [22, 22, 228, 228] : null,
+    c: isIcon ? [20, 18, 230, 232] : [20, 10, 230, 180]
+  };
+  var box = fitBoxes[concept];
+  var icon = document.querySelector("#concept-" + concept + " .logo-icon");
+  if (box && icon) {
+    var b = icon.getBBox();
+    // keep the drawing's centre line (x = 125) in the middle, so the pin sits over the wordmark
+    var halfWidth = Math.max(125 - b.x, b.x + b.width - 125);
+    var scale = Math.min((box[2] - box[0]) / (halfWidth * 2), (box[3] - box[1]) / b.height);
+    var cx = (box[0] + box[2]) / 2, cy = (box[1] + box[3]) / 2;
+    icon.setAttribute("transform", "translate(" + cx + " " + cy + ") scale(" + scale + ") translate(-125 " + (-(b.y + b.height / 2)) + ")");
+  }
+</script>
+</body>
+</html>

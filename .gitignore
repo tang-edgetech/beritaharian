@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# environment files (each app keeps its own .env.example)
+.env
+.env.*
+!.env.example
+
+# build output
+.next/
+out/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

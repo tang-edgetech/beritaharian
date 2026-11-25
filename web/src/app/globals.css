@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "@cendol/ui/tokens.css";
+
+/*
+  Public site base styles. Colours, fonts and radii come from packages/ui/src/tokens.css.
+  The full public design is built in Phase 1 from the chosen moodboard; this is the foundation.
+*/
+:root {
+  --page-background: var(--color-santan-50);
+  --page-text: var(--color-santan-900);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-background: var(--color-santan-950);
+    --page-text: var(--color-santan-100);
+  }
+}
+
+@layer base {
+  html {
+    @apply font-sans antialiased;
+  }
+  body {
+    background: var(--page-background);
+    color: var(--page-text);
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .site-container {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+}

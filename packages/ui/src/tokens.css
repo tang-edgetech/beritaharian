@@ -1,0 +1,82 @@
+/*
+  Cendol Satay design tokens (Tailwind CSS v4).
+  Colours come from the logo: pandan green, marigold, gula Melaka brown, coconut cream and satay orange.
+  Fonts are provisional until the moodboard is chosen: Nunito (brand, headings) and Figtree (body text).
+
+  Use them as normal Tailwind classes: bg-pandan-700, text-gula-900, font-display, rounded-card ...
+*/
+
+@import "@fontsource-variable/nunito";
+@import "@fontsource-variable/figtree";
+
+@theme {
+  /* brand */
+  --color-pandan-50: #eef7f2;
+  --color-pandan-100: #d5ebde;
+  --color-pandan-200: #a9d6bd;
+  --color-pandan-300: #74bb95;
+  --color-pandan-400: #3f9a3a;
+  --color-pandan-500: #2b8a5f;
+  --color-pandan-600: #237a53;
+  --color-pandan-700: #1f6b4a;
+  --color-pandan-800: #18523a;
+  --color-pandan-900: #113a29;
+  --color-pandan-950: #0a2419;
+
+  --color-marigold-50: #fef8ec;
+  --color-marigold-100: #fcecc9;
+  --color-marigold-200: #f9d993;
+  --color-marigold-300: #f5c562;
+  --color-marigold-400: #f0b443;
+  --color-marigold-500: #d9971f;
+  --color-marigold-600: #b57716;
+  --color-marigold-700: #8f5a15;
+  --color-marigold-800: #6c4415;
+  --color-marigold-900: #4d3112;
+
+  --color-gula-50: #fbf4ee;
+  --color-gula-100: #f3e2d2;
+  --color-gula-200: #e6c3a2;
+  --color-gula-300: #f3c98b;
+  --color-gula-400: #c27c45;
+  --color-gula-500: #9a5324;
+  --color-gula-600: #7b3f1a;
+  --color-gula-700: #643215;
+  --color-gula-800: #4a2511;
+  --color-gula-900: #33190b;
+  --color-gula-950: #1f0f06;
+
+  --color-satay-400: #d8742c;
+  --color-satay-500: #c8601f;
+  --color-satay-700: #7d3210;
+
+  --color-coconut: #fffaf0;
+
+  /* warm neutrals, tinted toward gula brown so greys never look flat */
+  --color-santan-50: #faf8f5;
+  --color-santan-100: #f2eee9;
+  --color-santan-200: #e4ddd5;
+  --color-santan-300: #cec4b8;
+  --color-santan-400: #a89b8d;
+  --color-santan-500: #847768;
+  --color-santan-600: #685c50;
+  --color-santan-700: #52483f;
+  --color-santan-800: #3a332d;
+  --color-santan-900: #26211d;
+  --color-santan-950: #171411;
+
+  /* status (separate from brand colours) */
+  --color-success-500: #2b8a5f;
+  --color-warning-500: #d9971f;
+  --color-danger-500: #c23b2e;
+  --color-info-500: #2f6fb5;
+
+  /* type */
+  --font-display: "Nunito Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Figtree Variable", "Segoe UI", system-ui, sans-serif;
+
+  /* shape */
+  --radius-card: 1rem;
+  --radius-control: 0.625rem;
+  --radius-pill: 999px;
+}

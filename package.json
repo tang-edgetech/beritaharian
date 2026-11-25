@@ -1,0 +1,23 @@
+{
+  "name": "cendol-satay",
+  "private": true,
+  "description": "Cendol Satay: Melaka news, business directory and civic reports",
+  "workspaces": [
+    "web",
+    "admin",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "cd backend && php artisan serve --port=8000",
+    "dev:web": "npm run dev --workspace web",
+    "dev:admin": "npm run dev --workspace admin",
+    "build:web": "npm run build --workspace web",
+    "build:admin": "npm run build --workspace admin",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test:api": "cd backend && php artisan test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
