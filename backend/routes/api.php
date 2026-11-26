@@ -19,6 +19,11 @@ use App\Http\Controllers\Api\Admin\Directory\ClaimController;
 use App\Http\Controllers\Api\Admin\Directory\ReviewController as ReviewModerationController;
 use App\Http\Controllers\Api\Admin\Directory\SectorController;
 use App\Http\Controllers\Api\PlaceAccountController;
+use App\Http\Controllers\Api\ReportAccountController;
+use App\Http\Controllers\Api\Admin\Civic\HandoverController;
+use App\Http\Controllers\Api\Admin\Civic\IncidentController;
+use App\Http\Controllers\Api\Admin\Civic\IncidentTypeController;
+use App\Http\Controllers\Api\Public\AlertController;
 use App\Http\Controllers\Api\Public\NewsController;
 use App\Http\Controllers\Api\Public\PlaceController;
 use App\Services\AuthService;
@@ -48,6 +53,12 @@ Route::prefix('public')->middleware('throttle:public')->group(function () {
     Route::get('places/pins', [PlaceController::class, 'pins']);
     Route::get('places/{slug}', [PlaceController::class, 'show']);
     Route::get('places/{slug}/reviews', [PlaceController::class, 'reviews']);
+
+    // Verified civic alerts (staff-written) and the kinds of incident readers can report
+    Route::get('alert-types', [AlertController::class, 'types']);
+    Route::get('alerts', [AlertController::class, 'index']);
+    Route::get('alerts/pins', [AlertController::class, 'pins']);
+    Route::get('alerts/{ref}', [AlertController::class, 'show']);
 });
 
 Route::prefix('auth')->middleware('throttle:auth')->group(function () {
@@ -100,6 +111,13 @@ Route::middleware(['auth:sanctum', 'abilities:*'])->group(function () {
         Route::post('businesses/{business}/photos', [PlaceAccountController::class, 'addPhoto'])->middleware('throttle:30,1,owner-photos');
         Route::put('businesses/{business}/photos/order', [PlaceAccountController::class, 'reorderPhotos']);
         Route::delete('businesses/{business}/photos/{media}', [PlaceAccountController::class, 'removePhoto']);
+
+        // Civic reports the reader sent
+        Route::get('reports', [ReportAccountController::class, 'index']);
+        Route::post('reports', [ReportAccountController::class, 'store'])->middleware('throttle:5,1,submit-report');
+        Route::get('reports/{ref}', [ReportAccountController::class, 'show']);
+        Route::post('reports/{ref}/updates', [ReportAccountController::class, 'update'])->middleware('throttle:20,1,report-reply');
+        Route::post('reports/{ref}/withdraw', [ReportAccountController::class, 'withdraw']);
     });
 
     Route::prefix('admin')->middleware(['permission:admin.access', 'two-factor.enforced'])->group(function () {
@@ -265,6 +283,46 @@ Route::middleware(['auth:sanctum', 'abilities:*'])->group(function () {
                 Route::get('reviews/{review}', [ReviewModerationController::class, 'show'])->withTrashed();
                 Route::post('reviews/{review}/moderate', [ReviewModerationController::class, 'moderate']);
                 Route::get('reviews/{review}/receipt', [ReviewModerationController::class, 'receipt'])->withTrashed();
+            });
+        });
+
+        /*
+        | Civic reports: incidents.view reads the queue, incidents.verify decides and publishes alerts,
+        | incidents.export prepares evidence packs for the police, incidents.types edits the report form's types.
+        | Opening an original file or downloading a pack is written to the audit log.
+        */
+        Route::prefix('incidents')->group(function () {
+            Route::middleware('permission:incidents.view|incidents.verify|incidents.export')->group(function () {
+                Route::get('summary', [IncidentController::class, 'summary']);
+                Route::get('verifiers', [IncidentController::class, 'verifiers']);
+                Route::get('/', [IncidentController::class, 'index']);
+                Route::get('{incident}', [IncidentController::class, 'show']);
+                Route::get('{incident}/evidence/{evidence}', [IncidentController::class, 'download']);
+                Route::get('{incident}/evidence/{evidence}/check', [IncidentController::class, 'check']);
+            });
+            Route::middleware('permission:incidents.verify')->group(function () {
+                Route::post('bulk', [IncidentController::class, 'bulk']);
+                Route::post('{incident}/action', [IncidentController::class, 'action']);
+                Route::put('{incident}/alert', [IncidentController::class, 'alert']);
+                Route::post('{incident}/notes', [IncidentController::class, 'note']);
+                Route::post('{incident}/evidence', [IncidentController::class, 'addEvidence'])->middleware('throttle:30,1');
+                Route::post('{incident}/photos', [IncidentController::class, 'addPhoto'])->middleware('throttle:60,1');
+                Route::put('{incident}/photos/order', [IncidentController::class, 'reorderPhotos']);
+                Route::delete('{incident}/photos/{media}', [IncidentController::class, 'removePhoto']);
+            });
+            Route::middleware('permission:incidents.export')->group(function () {
+                Route::post('{incident}/handovers', [HandoverController::class, 'store'])->middleware('throttle:10,1');
+                Route::get('{incident}/handovers/{handover}/download', [HandoverController::class, 'download']);
+            });
+        });
+        Route::prefix('incident-types')->group(function () {
+            Route::get('/', [IncidentTypeController::class, 'index'])->middleware('permission:incidents.view|incidents.verify|incidents.types');
+            Route::middleware('permission:incidents.types')->group(function () {
+                Route::post('/', [IncidentTypeController::class, 'store']);
+                Route::put('order', [IncidentTypeController::class, 'reorder']);
+                Route::get('{type}', [IncidentTypeController::class, 'show']);
+                Route::put('{type}', [IncidentTypeController::class, 'update']);
+                Route::delete('{type}', [IncidentTypeController::class, 'destroy']);
             });
         });
 

@@ -3,7 +3,7 @@
 import { AuthCard, errorMessage, Field, FormMessage, SubmitButton } from "@/components/account/auth-ui";
 import { readerApi, session, useReader } from "@/lib/auth";
 import type { MeResponse, User } from "@cendol/api-client";
-import { ChevronRight, LogOut, Star, Store } from "lucide-react";
+import { ChevronRight, LogOut, Siren, Star, Store } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
@@ -70,12 +70,16 @@ export default function AccountPage() {
   }
 
   return (
-    <AuthCard title={reader ? `Hi, ${reader.name.split(" ")[0]}` : "Your account"} lead="Your details, your reviews and the places you manage.">
+    <AuthCard title={reader ? `Hi, ${reader.name.split(" ")[0]}` : "Your account"} lead="Your details, your reviews, your reports and the places you manage.">
       {error ? <FormMessage>{error}</FormMessage> : null}
       {user ? <ProfileForm user={user} /> : !error ? <div className="h-40 animate-pulse rounded-xl bg-santan-100 dark:bg-santan-800" aria-hidden /> : null}
       <nav className="account-links flex flex-col gap-2 border-t border-santan-200 pt-4 dark:border-santan-800" aria-label="More in your account">
         <Link href="/account/reviews" className="account-link-row inline-flex h-11 items-center justify-between rounded-xl bg-santan-100 px-4 font-semibold hover:bg-santan-200 dark:bg-santan-800 dark:hover:bg-santan-700">
           <span className="inline-flex items-center gap-2"><Star className="size-4" aria-hidden />Your reviews</span>
+          <ChevronRight className="size-4" aria-hidden />
+        </Link>
+        <Link href="/account/reports" className="account-link-row inline-flex h-11 items-center justify-between rounded-xl bg-santan-100 px-4 font-semibold hover:bg-santan-200 dark:bg-santan-800 dark:hover:bg-santan-700">
+          <span className="inline-flex items-center gap-2"><Siren className="size-4" aria-hidden />Your reports</span>
           <ChevronRight className="size-4" aria-hidden />
         </Link>
         <Link href="/business" className="account-link-row inline-flex h-11 items-center justify-between rounded-xl bg-santan-100 px-4 font-semibold hover:bg-santan-200 dark:bg-santan-800 dark:hover:bg-santan-700">

@@ -7,11 +7,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useConfirm } from "@/components/confirm-dialog";
 import { IconAction } from "@/components/icon-action";
 import { useAuth } from "@/lib/auth";
+import { useIncidentSummary } from "@/lib/civic";
 import { useDirectorySummary } from "@/lib/directory";
 import { initials } from "@/lib/format";
-import type { DirectorySummary } from "@cendol/api-client";
+import type { DirectorySummary, IncidentSummary } from "@cendol/api-client";
 import {
   Banknote,
+  Inbox,
+  MessageCircleQuestion,
+  Radio,
+  ListChecks,
   Building2,
   BadgeCheck,
   ClipboardCheck,
@@ -46,8 +51,15 @@ interface NavItem {
   icon: LucideIcon;
   /** Shown when the person has any of these. */
   permission?: string | string[];
-  /** Shows a count of things waiting, from the directory summary. */
-  count?: (summary: DirectorySummary) => number;
+  /** Lights this item for every page under this path (the most specific match wins). */
+  match?: string;
+  /** Shows a count of things waiting, from the directory or report summaries. */
+  count?: (summary: Counts) => number | undefined;
+}
+
+interface Counts {
+  directory?: DirectorySummary;
+  incidents?: IncidentSummary;
 }
 
 interface NavSection {
@@ -69,10 +81,19 @@ const NAV: NavSection[] = [
   {
     title: "Places",
     items: [
-      { href: "/directory/businesses", label: "Places", icon: MapPinned, permission: ["directory.manage", "directory.claims", "reviews.moderate"], count: (s) => s.new_places },
+      { href: "/directory/businesses", label: "Places", icon: MapPinned, permission: ["directory.manage", "directory.claims", "reviews.moderate"], count: (s) => s.directory?.new_places },
       { href: "/directory/sectors", label: "Sectors", icon: Shapes, permission: "directory.manage" },
-      { href: "/directory/claims", label: "Ownership claims", icon: BadgeCheck, permission: "directory.claims", count: (s) => s.claims },
-      { href: "/reviews", label: "Reviews", icon: MessageSquareText, permission: "reviews.moderate", count: (s) => s.reviews_to_check + s.reported_reviews },
+      { href: "/directory/claims", label: "Ownership claims", icon: BadgeCheck, permission: "directory.claims", count: (s) => s.directory?.claims },
+      { href: "/reviews", label: "Reviews", icon: MessageSquareText, permission: "reviews.moderate", count: (s) => (s.directory ? s.directory.reviews_to_check + s.directory.reported_reviews : undefined) },
+    ],
+  },
+  {
+    title: "Reports",
+    items: [
+      { href: "/incidents/queue/check", match: "/incidents", label: "Queue", icon: Inbox, permission: ["incidents.view", "incidents.verify", "incidents.export"], count: (s) => s.incidents?.to_check },
+      { href: "/incidents/queue/waiting", label: "Waiting for reporter", icon: MessageCircleQuestion, permission: ["incidents.view", "incidents.verify", "incidents.export"], count: (s) => s.incidents?.waiting },
+      { href: "/incidents/queue/alerts", label: "Alerts", icon: Radio, permission: ["incidents.view", "incidents.verify", "incidents.export"], count: (s) => s.incidents?.live_alerts },
+      { href: "/incidents/types", label: "Incident types", icon: ListChecks, permission: "incidents.types" },
     ],
   },
   {
@@ -102,11 +123,14 @@ const NAV: NavSection[] = [
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { can } = useAuth();
-  const summary = useDirectorySummary();
+  const directory = useDirectorySummary();
+  const incidents = useIncidentSummary();
+  const counts: Counts = { directory: directory.data, incidents: incidents.data };
   // the most specific link wins: /news/review lights "Review queue", not "Stories"
-  const activeHref = NAV.flatMap((s) => s.items.map((i) => i.href))
-    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
-    .sort((a, b) => b.length - a.length)[0];
+  const activeHref = NAV.flatMap((s) => s.items)
+    .map((item) => ({ href: item.href, match: item.match ?? item.href }))
+    .filter(({ href, match }) => pathname === href || pathname === match || pathname.startsWith(`${match}/`))
+    .sort((a, b) => (pathname === b.href ? 1 : 0) - (pathname === a.href ? 1 : 0) || b.match.length - a.match.length)[0]?.href;
 
   return (
     <nav className="sidebar-nav flex flex-col gap-6" aria-label="Main">
@@ -135,9 +159,9 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                 >
                   <item.icon className="size-4" />
                   <span className="flex-1">{item.label}</span>
-                  {item.count && summary.data && item.count(summary.data) > 0 ? (
-                    <span className="sidebar-nav-count rounded-full bg-marigold-400 px-1.5 text-xs font-bold text-gula-900 tabular-nums" aria-label={`${item.count(summary.data)} waiting`}>
-                      {item.count(summary.data)}
+                  {(item.count?.(counts) ?? 0) > 0 ? (
+                    <span className="sidebar-nav-count rounded-full bg-marigold-400 px-1.5 text-xs font-bold text-gula-900 tabular-nums" aria-label={`${item.count?.(counts)} waiting`}>
+                      {item.count?.(counts)}
                     </span>
                   ) : null}
                 </Link>

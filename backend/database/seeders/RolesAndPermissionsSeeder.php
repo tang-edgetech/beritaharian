@@ -9,7 +9,7 @@ use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
-    /** Permissions grouped by area. Later phases add incidents.* and so on. */
+    /** Permissions grouped by area. Grouped by area for the roles page. */
     public const PERMISSIONS = [
         'users' => [
             'users.view' => 'View users',
@@ -36,6 +36,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'directory.claims' => 'Approve new places and ownership claims',
             'reviews.moderate' => 'Check, show and remove reviews',
         ],
+        'incidents' => [
+            'incidents.view' => 'View incident reports and evidence',
+            'incidents.verify' => 'Check incident reports, message reporters and publish alerts',
+            'incidents.export' => 'Prepare evidence packs for the police',
+            'incidents.types' => 'Manage incident types on the report form',
+        ],
         'billing' => [
             'billing.view' => 'View invoices, payments, customers and expenses',
             'billing.manage' => 'Prepare invoices, record payments and expenses',
@@ -54,11 +60,11 @@ class RolesAndPermissionsSeeder extends Seeder
     /** Super admin gets everything through a Gate::before check, so it is not listed here. */
     public const ROLES = [
         'super-admin' => ['label' => 'Super admin', 'description' => 'Full access to everything, including settings and roles.', 'system' => true, 'permissions' => []],
-        'admin' => ['label' => 'Admin', 'description' => 'Runs the site day to day: users, settings, news, billing and logs.', 'system' => false, 'permissions' => ['admin.access', 'users.view', 'users.create', 'users.update', 'users.delete', 'settings.manage', 'audit.view', 'logs.view', 'news.write', 'news.edit_any', 'news.publish', 'news.delete', 'news.categories', 'billing.view', 'billing.manage', 'billing.approve', 'billing.reports', 'directory.manage', 'directory.claims', 'reviews.moderate']],
+        'admin' => ['label' => 'Admin', 'description' => 'Runs the site day to day: users, settings, news, billing and logs.', 'system' => false, 'permissions' => ['admin.access', 'users.view', 'users.create', 'users.update', 'users.delete', 'settings.manage', 'audit.view', 'logs.view', 'news.write', 'news.edit_any', 'news.publish', 'news.delete', 'news.categories', 'billing.view', 'billing.manage', 'billing.approve', 'billing.reports', 'directory.manage', 'directory.claims', 'reviews.moderate', 'incidents.view', 'incidents.verify', 'incidents.export', 'incidents.types']],
         'finance' => ['label' => 'Finance', 'description' => 'Prepares invoices, records payments and expenses, prints reports. Confirming payments needs approval rights.', 'system' => false, 'permissions' => ['admin.access', 'billing.view', 'billing.manage', 'billing.reports']],
         'editor' => ['label' => 'Editor', 'description' => 'Approves and publishes news.', 'system' => false, 'permissions' => ['admin.access', 'news.write', 'news.edit_any', 'news.publish', 'news.delete', 'news.categories']],
         'journalist' => ['label' => 'Journalist', 'description' => 'Writes news drafts.', 'system' => false, 'permissions' => ['admin.access', 'news.write']],
-        'verifier' => ['label' => 'Verifier', 'description' => 'Fact-checks news and incident reports.', 'system' => false, 'permissions' => ['admin.access', 'news.verify']],
+        'verifier' => ['label' => 'Verifier', 'description' => 'Fact-checks news and incident reports.', 'system' => false, 'permissions' => ['admin.access', 'news.verify', 'incidents.view', 'incidents.verify', 'incidents.export']],
         'moderator' => ['label' => 'Moderator', 'description' => 'Reviews listings, claims and reviews.', 'system' => false, 'permissions' => ['admin.access', 'users.view', 'directory.manage', 'directory.claims', 'reviews.moderate']],
         'business-owner' => ['label' => 'Business owner', 'description' => 'Manages their own business listings.', 'system' => true, 'permissions' => []],
         'member' => ['label' => 'Member', 'description' => 'Every registered person. Can review and report.', 'system' => true, 'permissions' => []],

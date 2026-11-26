@@ -49,7 +49,7 @@ const TABS: Tab[] = [
   { href: "/", label: "Today", icon: Newspaper, match: (p) => p === "/" || p.startsWith("/news") || p.startsWith("/areas") || p.startsWith("/topics") || p.startsWith("/search") },
   { href: "/places", label: "Places", icon: Store, match: (p) => p.startsWith("/places") },
   { href: "/report", label: "Report", icon: Plus, match: (p) => p.startsWith("/report") },
-  { href: "/map", label: "Map", icon: MapIcon, match: (p) => p.startsWith("/map") },
+  { href: "/map", label: "Map", icon: MapIcon, match: (p) => p.startsWith("/map") || p.startsWith("/alerts") },
   { href: "/account", label: "Me", icon: UserRound, match: (p) => ["/account", "/business", "/login", "/register", "/verify"].some((x) => p.startsWith(x)) },
 ];
 

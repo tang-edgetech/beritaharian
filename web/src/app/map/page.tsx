@@ -1,11 +1,12 @@
 import { MapExplorer } from "@/components/places/map-explorer";
+import { getAlertPins } from "@/lib/alerts";
 import { getPins, getSectors } from "@/lib/places";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Map of Melaka",
-  description: "Every place on Cendol Satay on one map, with near me on your phone.",
+  description: "Every place on Cendol Satay and the active alerts in Melaka on one map, with near me on your phone.",
   alternates: { canonical: "/map" },
 };
 
@@ -21,6 +22,6 @@ export default function MapPage() {
 }
 
 async function Body() {
-  const [sectors, pins] = await Promise.all([getSectors(), getPins({})]);
-  return <MapExplorer sectors={sectors} pins={pins} />;
+  const [sectors, pins, alerts] = await Promise.all([getSectors(), getPins({}), getAlertPins({ state: "active" })]);
+  return <MapExplorer sectors={sectors} pins={pins} alerts={alerts} />;
 }

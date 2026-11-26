@@ -1,9 +1,11 @@
+import { LiveAlertsStrip } from "@/components/civic/live-alerts-strip";
 import { LeadStory, RankedList, StoryCard } from "@/components/news/article-cards";
 import { toneFor } from "@/components/news/category-tone";
 import { getAreas, getHome } from "@/lib/news";
 import type { HomeSection } from "@cendol/api-client";
 import { ArrowRight, Map as MapIcon, Store, Zap } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 import { articleHref } from "@/lib/news";
 
 /** The Kopitiam Board: lead story, "Hari ini" list, breaking strip, then a row per section. */
@@ -31,25 +33,32 @@ export default async function HomePage() {
   return (
     <div className="kopitiam-board flex flex-col gap-12 pt-6">
       <h1 className="sr-only">Cendol Satay: today&apos;s news from Melaka</h1>
-      {home.breaking.length ? (
-        <section className="breaking-strip site-container" aria-label="Breaking news">
-          <div className="flex flex-col gap-2 rounded-card bg-red-700 px-4 py-3 text-white sm:flex-row sm:items-center sm:gap-4">
-            <span className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest uppercase">
-              <Zap className="size-4" aria-hidden />
-              Breaking
-            </span>
-            <ul className="flex min-w-0 flex-col gap-1 sm:flex-row sm:gap-6">
-              {home.breaking.map((a) => (
-                <li key={a.slug} className="min-w-0">
-                  <Link href={articleHref(a)} className="block truncate font-semibold hover:underline">
-                    {a.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      ) : null}
+      {/* breaking news and live alerts sit together; the wrapper hides itself when both are empty */}
+      <div className="board-urgent hidden flex-col gap-3 has-[section]:flex">
+        {home.breaking.length ? (
+          <section className="breaking-strip site-container" aria-label="Breaking news">
+            <div className="flex flex-col gap-2 rounded-card bg-red-700 px-4 py-3 text-white sm:flex-row sm:items-center sm:gap-4">
+              <span className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest uppercase">
+                <Zap className="size-4" aria-hidden />
+                Breaking
+              </span>
+              <ul className="flex min-w-0 flex-col gap-1 sm:flex-row sm:gap-6">
+                {home.breaking.map((a) => (
+                  <li key={a.slug} className="min-w-0">
+                    <Link href={articleHref(a)} className="block truncate font-semibold hover:underline">
+                      {a.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        ) : null}
+
+        <Suspense fallback={null}>
+          <LiveAlertsStrip />
+        </Suspense>
+      </div>
 
       <section className="board-top site-container grid gap-8 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]" aria-label="Top stories">
         <LeadStory article={home.lead} />

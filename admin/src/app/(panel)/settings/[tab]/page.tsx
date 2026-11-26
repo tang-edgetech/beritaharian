@@ -16,6 +16,7 @@ const TABS = [
   { key: "company", label: "Company", permission: "settings.manage" },
   { key: "billing", label: "Billing", permission: "settings.manage" },
   { key: "directory", label: "Places", permission: "settings.manage" },
+  { key: "reports", label: "Reports", permission: "settings.manage" },
   { key: "logs", label: "Logs", permission: "logs.view" },
   { key: "audit", label: "Audit log", permission: "audit.view" },
   { key: "extra", label: "Extra", permission: "settings.manage" },
@@ -35,6 +36,42 @@ const DIRECTORY: SettingSection[] = [
         placeholder: "One word or phrase per line",
         hint: "Reviews using these are held for a moderator to read, not rejected.",
       },
+    ],
+  },
+];
+
+const REPORTS: SettingSection[] = [
+  {
+    title: "Sending reports",
+    description: "Limits for readers who send incident reports from the site or app.",
+    fields: [
+      { key: "reports_per_day", label: "Reports one person can send per day", type: "number", hint: "Stops floods of reports from one account. 5 suits most people." },
+      { key: "max_files", label: "Files per report", type: "number", hint: "Photos, videos, voice notes or PDFs, counted together. Up to 20." },
+      { key: "max_file_mb", label: "Largest file (MB)", type: "number", hint: "Videos are the biggest. Larger files take longer to send on mobile data." },
+    ],
+  },
+  {
+    title: "Checking reports",
+    fields: [
+      { key: "nearby_radius_m", label: "“Nearby reports” distance (metres)", type: "number", hint: "Reports this close, sent within 3 days, are shown together so duplicates are easy to spot." },
+      { key: "reference_prefix", label: "Reference prefix", type: "text", placeholder: "MLK", hint: "Capital letters and numbers only, e.g. MLK gives MLK-2026-000123. Only new reports use a new prefix." },
+    ],
+  },
+  {
+    title: "Keeping files",
+    fields: [
+      {
+        key: "purge_rejected_days",
+        label: "Delete files from rejected reports after (days)",
+        type: "number",
+        hint: "Original files of rejected reports are deleted after this many days, unless they were handed to the police. Other reports keep theirs. At least 30.",
+      },
+    ],
+  },
+  {
+    title: "Police handover",
+    fields: [
+      { key: "default_agency", label: "Usual police station or agency", type: "text", placeholder: "PDRM IPD Melaka Tengah", hint: "Filled in for you on the handover form. You can change it each time." },
     ],
   },
 ];
@@ -297,6 +334,8 @@ export default function SettingsTabPage() {
         <SettingsForm group="billing" sections={BILLING} />
       ) : tab === "directory" ? (
         <SettingsForm group="directory" sections={DIRECTORY} />
+      ) : tab === "reports" ? (
+        <SettingsForm group="reports" sections={REPORTS} />
       ) : tab === "logs" ? (
         <LoginListing />
       ) : tab === "audit" ? (

@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   if (!valid) return Response.json({ message: "Not allowed." }, { status: 401 });
 
   const body = (await request.json().catch(() => ({}))) as { tags?: unknown };
-  const tags = Array.isArray(body.tags) ? body.tags.filter((t): t is string => typeof t === "string" && /^[a-z0-9-]{1,120}$/.test(t)).slice(0, 20) : [];
+  const tags = Array.isArray(body.tags) ? body.tags.filter((t): t is string => typeof t === "string" && /^[A-Za-z0-9-]{1,120}$/.test(t)).slice(0, 20) : [];
   for (const tag of tags) revalidateTag(tag, { expire: 0 });
 
   return Response.json({ revalidated: tags });

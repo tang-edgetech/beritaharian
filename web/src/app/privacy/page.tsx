@@ -19,6 +19,8 @@ export default function PrivacyPage() {
         </ul>
         <h2>Your name on reports</h2>
         <p>You can choose to hide your name from the public on a report. Our verifiers still see it, so they can follow up with you.</p>
+        <h2 id="reports">Community reports</h2>
+        <p>When you report something, we keep the pin, the time, what you wrote and the files you add. Our verifiers check it. A public alert uses only our own words and blurred photos, never your words, files or contact details. Files from reports that are rejected or withdrawn are deleted after a set period.</p>
         <h2>Your choices</h2>
         <p>You can ask to see, correct or delete your details at any time. We never sell your details.</p>
       </div>

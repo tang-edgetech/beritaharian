@@ -22,7 +22,7 @@ export function BackButton({ href, label = "Back" }: BackButtonProps) {
   const pathname = usePathname();
 
   return (
-    <Button variant="ghost" size="sm" asChild className="back-button -ml-2 text-muted-foreground">
+    <Button variant="ghost" size="sm" asChild className="back-button -ml-2 self-start text-muted-foreground">
       <Link href={href ?? parentPath(pathname)}>
         <ArrowLeft />
         {label}

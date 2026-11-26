@@ -96,6 +96,21 @@ php artisan db:seed --class=DemoNewsSeeder
 php artisan db:seed --class=DemoPlacesSeeder
 ```
 
+## Civic reports and alerts
+
+- **Public site:** signed-in readers report from `/report` (pin on the map or "use my location", type, time, photos, videos, voice notes or PDFs) and follow their reports under `/account/reports`. Verified alerts are at `/alerts`.
+- **Admin › Reports:** the verifier queue (to check, waiting for reporter, checking, mine, alerts, decided), each report with overview, decide, evidence, alert, timeline, police handover and activity tabs. Incident types and Settings › Reports (limits, retention, reference prefix, default police station).
+- **Roles:** Verifier (`incidents.view`, `incidents.verify`, `incidents.export`); Admin also has `incidents.types`. Nobody can decide a report they sent themselves.
+- **Evidence:** original files are kept unchanged in `backend/storage/app/private/incidents/` (back it up with the database) with a SHA-256 taken on arrival, camera details and the uploader's IP. Every time staff open a file or download a pack it goes in the audit log. Files from rejected and withdrawn reports are deleted after the retention period (default 180 days) unless they were handed to the police.
+- **Public alerts** show only what staff wrote and the blurred photos they upload. The reporter's own words, files and contact details never reach the public site; readers who tick "Hide my name" show as "A Cendol Satay reader".
+- **Police handover:** the Handover tab builds a ZIP with a summary PDF, the original files and `manifest.txt` (check with `sha256sum -c manifest.txt`), and logs the officer, station and police report number.
+- **Emails to reporters** link to the public site: set `WEB_URL` in `backend/.env`.
+- **Sample reports for local testing** (never in production; every title ends in "(sample)"):
+
+```powershell
+php artisan db:seed --class=DemoIncidentsSeeder
+```
+
 ## Finance (invoices and bookkeeping)
 
 In the admin under **Finance**. Fill in **Settings › Company** (name, SSM number, address, bank account) before issuing real invoices; those details print on every document.

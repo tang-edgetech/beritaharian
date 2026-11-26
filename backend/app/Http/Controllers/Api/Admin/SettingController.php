@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Exceptions\FriendlyException;
 use App\Http\Controllers\Controller;
 use App\Services\SettingService;
+use App\Services\SiteCache;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -35,6 +36,7 @@ class SettingController extends Controller
                     'attributes' => collect($changes)->map->new->all(),
                 ])
                 ->log(Str::headline($group).' settings changed');
+            app(SiteCache::class)->refresh(['settings']); // the public site caches its settings
         }
 
         return response()->json([

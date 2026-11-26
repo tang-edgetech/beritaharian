@@ -70,6 +70,16 @@ return [
         'blocked_words' => ['default' => [], 'rules' => 'array', 'public' => false],
         'map_center' => ['default' => ['lat' => 2.1960, 'lng' => 102.2480, 'zoom' => 13], 'rules' => 'required|array', 'public' => true],
     ],
+    // Civic reports and public alerts.
+    'reports' => [
+        'reports_per_day' => ['default' => 5, 'rules' => 'required|integer|min:1|max:50', 'public' => false],
+        'max_files' => ['default' => 6, 'rules' => 'required|integer|min:1|max:20', 'public' => true],
+        'max_file_mb' => ['default' => 25, 'rules' => 'required|integer|min:1|max:200', 'public' => true],
+        'nearby_radius_m' => ['default' => 500, 'rules' => 'required|integer|min:50|max:5000', 'public' => false],
+        'purge_rejected_days' => ['default' => 180, 'rules' => 'required|integer|min:30|max:3650', 'public' => true],
+        'reference_prefix' => ['default' => 'MLK', 'rules' => 'required|string|max:8|regex:/^[A-Z0-9]+$/', 'public' => false],
+        'default_agency' => ['default' => 'PDRM IPD Melaka Tengah', 'rules' => 'nullable|string|max:150', 'public' => false],
+    ],
     'extra' => [
         'google_analytics_id' => ['default' => null, 'rules' => 'nullable|string|max:30', 'public' => true],
         'items_per_page_default' => ['default' => 25, 'rules' => 'required|in:10,25,50,100', 'public' => false],

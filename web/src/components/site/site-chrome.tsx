@@ -1,5 +1,5 @@
 import { getCategories } from "@/lib/news";
-import { Search } from "lucide-react";
+import { Search, Siren } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -52,6 +52,12 @@ async function SectionNav() {
             Latest
           </Link>
         </li>
+        <li>
+          <Link href="/alerts" className="section-nav-link is-alerts inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-sm font-semibold whitespace-nowrap text-satay-700 hover:bg-santan-100 dark:text-satay-400 dark:hover:bg-santan-800">
+            <Siren className="size-4" aria-hidden />
+            Alerts
+          </Link>
+        </li>
         {categories.map((c) => (
           <li key={c.slug}>
             <Link
@@ -91,6 +97,8 @@ export function SiteFooter() {
           <Link href="/areas/melaka-tengah" className="text-santan-600 hover:underline dark:text-santan-400">Melaka Tengah</Link>
           <Link href="/areas/alor-gajah" className="text-santan-600 hover:underline dark:text-santan-400">Alor Gajah</Link>
           <Link href="/areas/jasin" className="text-santan-600 hover:underline dark:text-santan-400">Jasin</Link>
+          <Link href="/alerts" className="text-santan-600 hover:underline dark:text-santan-400">Alerts</Link>
+          <Link href="/report" className="text-santan-600 hover:underline dark:text-santan-400">Report something</Link>
         </nav>
       </div>
     </footer>

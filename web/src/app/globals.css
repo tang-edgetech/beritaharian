@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@cendol/ui/tokens.css";
 @import "@cendol/map/map-view.css";
+/* the shared map component uses Tailwind classes too (e.g. "isolate", which keeps Leaflet under the sticky header) */
+@source "../../../packages/map/src";
 
 /*
   Public site base styles. Colours, fonts and radii come from packages/ui/src/tokens.css.

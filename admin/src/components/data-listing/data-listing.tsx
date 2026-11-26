@@ -108,6 +108,10 @@ interface DataListingProps<T extends RowData> {
   empty?: { title: string; description?: string; action?: ReactNode };
   /** Shape of the API answer: Laravel resource collection (meta) or plain paginator. */
   responseShape?: "resource" | "plain";
+  /** Clicking a row (outside its links, buttons and tick box), e.g. to preview it beside the list. */
+  onRowClick?: (row: T) => void;
+  /** Highlights the row that is open in a preview. */
+  isRowActive?: (row: T) => boolean;
 }
 
 function normalise<T>(data: unknown, shape: "resource" | "plain"): ListingResponse<T> {
@@ -147,6 +151,8 @@ export function DataListing<T extends RowData>({
   canSelectRow,
   empty,
   responseShape = "resource",
+  onRowClick,
+  isRowActive,
 }: DataListingProps<T>) {
   const confirm = useConfirm();
   const queryClient = useQueryClient();
@@ -502,7 +508,25 @@ export function DataListing<T extends RowData>({
               </TableRow>
             ) : (
               rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() ? "selected" : undefined} className="data-listing-row">
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() ? "selected" : undefined}
+                  aria-current={isRowActive?.(row.original) ? "true" : undefined}
+                  className={[
+                    "data-listing-row",
+                    onRowClick ? "has-row-click cursor-pointer" : "",
+                    isRowActive?.(row.original) ? "is-active bg-marigold-50 hover:bg-marigold-50 dark:bg-marigold-900/30" : "",
+                  ].join(" ")}
+                  onClick={
+                    onRowClick
+                      ? (event) => {
+                          // links, buttons and tick boxes inside the row do their own thing
+                          if ((event.target as HTMLElement).closest("a, button, input, label, [role=checkbox]")) return;
+                          onRowClick(row.original);
+                        }
+                      : undefined
+                  }
+                >
                   {row.getVisibleCells().map((cell) => {
                     if (cell.column.id === "select") {
                       return (

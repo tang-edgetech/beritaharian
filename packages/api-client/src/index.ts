@@ -5,6 +5,7 @@
 
 export * from "./types";
 export * from "./directory";
+export * from "./civic";
 import type { ApiErrorBody } from "./types";
 
 export class ApiError extends Error {

@@ -1,15 +1,23 @@
-import { ComingSoon } from "@/components/site/coming-soon";
-import { Siren } from "lucide-react";
+import { ReportPageBody } from "@/components/civic/report-form";
+import { getAlertTypes, getReportLimits } from "@/lib/alerts";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-export const metadata: Metadata = { title: "Report something" };
+export const metadata: Metadata = {
+  title: "Report something",
+  description: "Tell the Cendol Satay team about a flood, road hazard or anything happening on your street in Melaka.",
+  alternates: { canonical: "/report" },
+};
 
 export default function ReportPage() {
   return (
-    <ComingSoon title="Tell us what you saw" icon={<Siren className="size-7" aria-hidden />}>
-      <p>Soon you can report floods, road damage or anything happening on your street, with photos and the exact place on a map.</p>
-      <p>Our verifiers check every report. You can choose to hide your name from the public; only our verifiers will see it.</p>
-      <p>For emergencies, call 999 now.</p>
-    </ComingSoon>
+    <Suspense fallback={<div className="site-container h-96 max-w-3xl animate-pulse py-6" aria-busy />}>
+      <Body />
+    </Suspense>
   );
+}
+
+async function Body() {
+  const [types, limits] = await Promise.all([getAlertTypes(), getReportLimits()]);
+  return <ReportPageBody types={types} limits={limits} />;
 }

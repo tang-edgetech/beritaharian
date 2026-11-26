@@ -15,6 +15,7 @@ const AREAS = [
   { value: "billing", label: "Billing" },
   { value: "news", label: "Newsroom" },
   { value: "directory", label: "Places" },
+  { value: "civic", label: "Reports" },
 ];
 
 /** Field names as people say them. */
@@ -42,6 +43,15 @@ const FIELD_LABELS: Record<string, string> = {
   tax_sen: "Tax",
   void_reason: "Void reason",
   rejected_reason: "Reject reason",
+  severity: "Severity",
+  assigned_to: "Assigned to",
+  incident_type_id: "Type",
+  decision_note: "Decision note",
+  public_title: "Alert title",
+  public_summary: "Alert text",
+  public_address: "Alert place",
+  alert_published_at: "Alert on the site since",
+  resolved_at: "Resolved",
 };
 
 function show(value: unknown, key = ""): string {

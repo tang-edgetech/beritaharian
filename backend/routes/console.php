@@ -15,3 +15,6 @@ Schedule::call(fn () => Article::where('status', Article::SCHEDULED)->where('pub
 
 // Receipt photos from reviews are deleted 90 days after a moderator checked them.
 Schedule::call(fn () => app(\App\Services\Directory\ReviewService::class)->purgeReceipts())->dailyAt('03:30')->name('purge-review-receipts');
+
+// Files from rejected and withdrawn civic reports are deleted after the retention period in Settings › Reports.
+Schedule::call(fn () => app(\App\Services\Civic\IncidentService::class)->purgeExpiredEvidence())->dailyAt('03:45')->name('purge-incident-evidence');

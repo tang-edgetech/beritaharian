@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Billing\CreditNote;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
+use App\Models\Civic\Incident;
 use App\Models\Directory\Business;
 use App\Models\Directory\BusinessClaim;
 use App\Models\Directory\Review;
@@ -43,6 +44,11 @@ class LogController extends Controller
                         ->where(fn (Builder $s) => $s->where('subject_type', Business::class)->where('subject_id', $id))
                         ->orWhere(fn (Builder $s) => $s->where('subject_type', BusinessClaim::class)->whereIn('subject_id', BusinessClaim::where('business_id', $id)->select('id')))
                         ->orWhere(fn (Builder $s) => $s->where('subject_type', Review::class)->whereIn('subject_id', Review::withTrashed()->where('business_id', $id)->select('id'))));
+                }),
+                // everything that happened to one incident report: status changes, alert edits, file opens and handovers
+                AllowedFilter::callback('subject_incident', function (Builder $q, $v) {
+                    $id = Incident::withTrashed()->where('reference_no', $v)->value('id');
+                    $q->where('subject_type', Incident::class)->where('subject_id', $id);
                 }),
                 // everything that happened to one invoice: the invoice, its payments and its credit notes
                 AllowedFilter::callback('subject_invoice', function (Builder $q, $v) {

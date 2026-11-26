@@ -593,45 +593,60 @@ erDiagram
   incidents ||--o{ incident_updates : timeline
   incidents ||--o{ evidence_handovers : "handed to"
   areas ||--o{ incidents : "happens in"
-  verifications }o--|| users : "done by"
+  incident_types ||--o{ incidents : "kind of"
+  incidents ||--o{ media : "blurred public photos"
   incidents {
     bigint id PK
     char reference_no UK "MLK-2026-000123"
     bigint reporter_id FK
     bigint incident_type_id FK
     bigint area_id FK
-    point geo
+    decimal latitude
+    decimal longitude
+    string address "reporter's own words"
     timestamp occurred_at
+    string title
     text description
     boolean is_anonymous_public
-    enum status "new, triage, investigating, verified, unconfirmed, rejected, closed"
+    enum status "new, needs_info, investigating, verified, unconfirmed, rejected, closed, withdrawn"
     enum severity "low, medium, high, critical"
+    bigint assigned_to FK
+    json checklist "verifier's checks"
+    string decision_note "reason the reporter sees"
+    bigint duplicate_of_id FK
+    string public_title "staff-written alert"
+    text public_summary
+    timestamp alert_published_at
+    timestamp resolved_at
+    timestamp consented_at "PDPA notice"
+  }
+  incident_updates {
+    bigint incident_id FK
+    bigint user_id FK
+    enum kind "status, note, message, reply, evidence, alert, handover"
+    text body
+    boolean visible_to_reporter
   }
   incident_evidences {
     bigint incident_id FK
-    string disk_path
+    string disk_path "private, null once purged"
+    string original_name
     string mime
     char sha256 "integrity"
     json exif
     string uploader_ip
     timestamp captured_at
   }
-  verifications {
-    bigint id PK
-    string verifiable_type "Article, Incident, Business"
-    bigint verifiable_id
-    bigint verifier_id FK
-    enum verdict "verified, false, misleading, unconfirmed"
-    json checklist
-    text notes
-  }
   evidence_handovers {
     bigint incident_id FK
     bigint exported_by FK
     string agency "PDRM IPD Melaka Tengah"
     string officer_name
+    string officer_id
     string police_report_no
+    json evidence_ids
     char manifest_sha256
+    char pack_sha256
   }
 </pre>
       </div>
@@ -710,7 +725,8 @@ erDiagram
 /news                     latest
 /news/[category]
 /news/[category]/[slug]
-/alerts                   verified civic alerts
+/alerts                   verified civic alerts, list beside a map (built)
+/alerts/[ref]
 /places                   Peta Melaka: list beside a map
 /places/[sector]
 /places/[sector]/[slug]
@@ -721,9 +737,10 @@ erDiagram
 /places/[sector]/[slug]/reviews
 /search?q=&amp;near=&amp;open-now=
 /areas/[area]
-/report                   submit incident
+/report                   report from the map (built)
 /account
-/account/reports
+/account/reports           built
+/account/reports/[ref]     timeline, reply, withdraw
 /account/reviews           built
 /account/saved
 /account/security
@@ -743,12 +760,13 @@ erDiagram
 /news/[id]/edit
 /news/[id]/revisions
 /news/categories
-/verification/queue
-/verification/[type]/[id]
-/incidents
-/incidents/[ref]
-/incidents/[ref]/evidence
-/incidents/[ref]/handover
+/incidents/queue/[queue]   check, waiting, checking, mine, alerts,
+                           decided, all; list with a map preview
+/incidents/[ref]/[tab]     overview, decide, evidence, alert,
+                           timeline, handover, activity
+/incidents/[ref]/evidence/[file]
+/incidents/types
+/incidents/types/[slug]
 /directory/businesses
 /directory/businesses/[id]/[tab]
 /directory/sectors
@@ -756,6 +774,7 @@ erDiagram
 /reviews/[queue]           to check, reported, all
 /reviews/[id]
 /settings/directory        check-in distance, limits, blocked words
+/settings/reports          file limits, retention, police station
 /billing/plans
 /billing/subscriptions
 /billing/placements
@@ -1084,7 +1103,7 @@ number_sequences  type, year, next_value   (gap-free numbering, locked per issue
         <div class="phase-item"><strong>Phase 0 · Foundation (built)</strong><span>Repo, provisional design tokens from the logo, Laravel API, sign-in with email codes and 2FA, users and roles, settings, audit and sign-in logs, the shared listing component. Still to do: public sign-up pages and tokens from your moodboard.</span></div>
         <div class="phase-item"><strong>Phase 1 · News (built)</strong><span>Newsroom in the admin: stories with a rich-text editor, cover photos (resized to small WebP copies), topics, sources, versions, review queue, drag-ordered categories. Workflow: draft → fact-check by a different person → editor publishes or schedules; breaking news can go live as "Developing" first; live edits need a note and public corrections are shown. Public site: Kopitiam Board home (lead story, "Hari ini" most read, breaking strip, sections, Near you), story pages with sources, corrections and WhatsApp sharing, Latest, sections, places, topics, search, reader sign-up and sign-in, phone tab bar. Pages are cached for a minute and refreshed the moment a story changes. Seeded Melaka districts and localities, and 7 starter categories.</span></div>
         <div class="phase-item"><strong>Phase 2 · Places (built)</strong><span>Sectors with their own detail fields, places with branches, opening hours (past midnight too) and photos. Peta Melaka pages on Leaflet and OpenStreetMap: list beside a clustered map, filters, open now, near me (location never put in the address), full-screen map. Reviews need proof of a visit: check-in within 150 m shows at once, receipt photos wait for a moderator and are deleted 90 days later; automatic checks hold reviews with links, phone numbers or blocked words. Owners claim with an SSM number or document, then edit hours, contacts and photos and reply to reviews, never delete them. Readers can suggest places. Admin: places, sectors, claims, review queues, a Places settings tab.</span></div>
-        <div class="phase-item"><strong>Phase 3 · Civic reports</strong><span>Report from the map, evidence storage, verifier queue as list and detail with map preview, public alerts, evidence packs.</span></div>
+        <div class="phase-item"><strong>Phase 3 · Civic reports (built)</strong><span>Readers report from the map (pin or my location) with photos, videos, voice notes or PDFs, can hide their name from the public, and accept a PDPA notice. Original files are kept privately and unchanged, with a SHA-256, camera details and IP taken on arrival; every time staff open a file it is logged. Verifier queue as a list with a map preview: ask the reporter for more, check, then verify, mark unconfirmed or reject (with a reason the reporter sees, or as a duplicate). Nobody decides their own report. Verified reports become public alerts written by staff with blurred photos uploaded separately, shown at /alerts and on the map and home page, and marked resolved when closed. Police handover builds a ZIP with a summary PDF, the originals and a hash manifest, and logs the officer and police report number. Files from rejected or withdrawn reports are deleted after 180 days unless handed over. Incident types and a Reports settings tab in the admin.</span></div>
         <div class="phase-item"><strong>Phase 4 · Billing (built early)</strong><span>Customers, invoices with running numbers, payment checks, receipts and refund vouchers, credit notes, expenses with bills, six finance reports plus customer statements, A4 PDFs and CSV, Company and Billing settings, Finance role. Still to come with Phase 5: emailing documents, overdue reminders, business owners' invoice page, MyInvois submission when required. Real invoices wait for the SSM registration and business bank account.</span></div>
         <div class="phase-item"><strong>Phase 5 · Monetisation</strong><span>Plans, subscriptions, pins and shout-outs with scheduling, all billed through Phase 4. Payment gateways (FPX, cards, TNG eWallet, GrabPay) added as drivers.</span></div>
         <div class="phase-item"><strong>Phase 6 · Mobile</strong><span>Expo app on the same API, using the Peta Melaka phone layout: news feed, directory map, report with camera and GPS, push notifications. Google Maps upgrade when revenue allows.</span></div>

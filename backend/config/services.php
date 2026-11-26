@@ -37,6 +37,7 @@ return [
 
     // The public Next.js site, told to refresh its cached pages after news changes.
     'web' => [
+        'url' => env('WEB_URL', 'http://localhost:3000'),
         'revalidate_url' => env('WEB_REVALIDATE_URL'),
         'revalidate_secret' => env('WEB_REVALIDATE_SECRET'),
     ],

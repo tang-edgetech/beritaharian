@@ -1,18 +1,23 @@
 "use client";
 
-import type { PlaceDetail, PlacePin, Sector } from "@cendol/api-client";
+import type { AlertPin, PlaceDetail, PlacePin, Sector } from "@cendol/api-client";
 import { MapView, type MapPoint } from "@cendol/map";
 import { Layers, Loader2, LocateFixed, MapPin, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { alertHref } from "@/lib/alert-links";
 import { placeHref, ratingText } from "@/lib/place-links";
+import { IncidentIcon, SeverityBadge } from "../civic/alert-bits";
 import { toneFor } from "../news/category-tone";
 import { OpenNowLine, SectorChip, SectorIcon, Stars } from "./place-bits";
 
 const API = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
 
-/** The full-screen Peta Melaka map: every place, sector layers, "near me" and a card for the chosen pin. */
-export function MapExplorer({ sectors, pins }: { sectors: Sector[]; pins: PlacePin[] }) {
+const ALERT_PREFIX = "alert:";
+
+/** The full-screen Peta Melaka map: every place, sector layers, active alerts, "near me" and a card for the chosen pin. */
+export function MapExplorer({ sectors, pins, alerts = [] }: { sectors: Sector[]; pins: PlacePin[]; alerts?: AlertPin[] }) {
+  const [showAlerts, setShowAlerts] = useState(true);
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<PlaceDetail | null>(null);
@@ -22,8 +27,15 @@ export function MapExplorer({ sectors, pins }: { sectors: Sector[]; pins: PlaceP
   const [layersOpen, setLayersOpen] = useState(false);
 
   const visible = useMemo(() => pins.filter((p) => !hidden.has(p.sector ?? "")), [pins, hidden]);
-  const mapPins = useMemo(() => visible.map((p) => ({ id: p.id, latitude: p.latitude, longitude: p.longitude, label: p.name, tone: p.color })), [visible]);
+  const mapPins = useMemo(
+    () => [
+      ...visible.map((p) => ({ id: p.id, latitude: p.latitude, longitude: p.longitude, label: p.name, tone: p.color })),
+      ...(showAlerts ? alerts.map((a) => ({ id: ALERT_PREFIX + a.ref, latitude: a.latitude, longitude: a.longitude, label: `Alert: ${a.title}`, tone: a.color ?? ("satay" as const) })) : []),
+    ],
+    [visible, alerts, showAlerts],
+  );
   const selected = pins.find((p) => p.id === selectedId) ?? null;
+  const selectedAlert = selectedId?.startsWith(ALERT_PREFIX) ? (alerts.find((a) => ALERT_PREFIX + a.ref === selectedId) ?? null) : null;
 
   // a little more about the chosen place (address, open now)
   useEffect(() => {
@@ -127,9 +139,12 @@ export function MapExplorer({ sectors, pins }: { sectors: Sector[]; pins: PlaceP
               ))}
             </ul>
             <p className="mt-3 mb-1 text-sm font-black">Community reports</p>
-            <label className="flex items-center gap-2 text-sm text-santan-500">
-              <input type="checkbox" disabled className="size-4" />
-              Coming soon
+            <label className="map-layer-alerts flex cursor-pointer items-center gap-2 text-sm">
+              <input type="checkbox" checked={showAlerts} onChange={(e) => setShowAlerts(e.target.checked)} className="size-4 accent-pandan-600" />
+              <span className="inline-flex size-6 items-center justify-center rounded-full bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-200">
+                <IncidentIcon icon="siren" className="size-3.5" />
+              </span>
+              Active alerts ({alerts.length})
             </label>
           </div>
         ) : null}
@@ -142,7 +157,29 @@ export function MapExplorer({ sectors, pins }: { sectors: Sector[]; pins: PlaceP
 
       <p className="map-count absolute bottom-3 left-3 z-[500] rounded-full bg-white/90 px-3 py-1 text-xs font-semibold shadow dark:bg-santan-900/90">
         {visible.length} {visible.length === 1 ? "place" : "places"}
+        {showAlerts && alerts.length ? ` · ${alerts.length} ${alerts.length === 1 ? "alert" : "alerts"}` : ""}
       </p>
+
+      {selectedAlert ? (
+        <div className="map-alert-card absolute inset-x-3 bottom-12 z-[600] sm:right-auto sm:bottom-10 sm:left-3 sm:w-96" role="dialog" aria-label={selectedAlert.title}>
+          <div className="relative flex flex-col gap-2 rounded-card bg-white p-4 shadow-xl dark:bg-santan-900">
+            <button type="button" onClick={() => setSelectedId(null)} className="absolute top-2 right-2 inline-flex size-8 items-center justify-center rounded-full hover:bg-santan-100 dark:hover:bg-santan-800" aria-label="Close" title="Close">
+              <X className="size-4" aria-hidden />
+            </button>
+            <div className="flex flex-wrap items-center gap-1.5 pr-8">
+              <span className="inline-flex h-6 items-center gap-1 rounded-full bg-red-50 px-2 text-xs font-bold text-red-800 dark:bg-red-950 dark:text-red-200">
+                <IncidentIcon icon={selectedAlert.icon} className="size-3.5" />
+                Active alert
+              </span>
+              <SeverityBadge severity={selectedAlert.severity} />
+            </div>
+            <p className="pr-8 font-display text-lg leading-snug font-black text-gula-900 dark:text-coconut">{selectedAlert.title}</p>
+            <Link href={alertHref(selectedAlert.ref)} className="mt-1 inline-flex h-10 items-center justify-center rounded-full bg-gula-900 px-4 text-sm font-bold text-coconut hover:bg-gula-800 dark:bg-marigold-400 dark:text-gula-900">
+              Open this alert
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       {selected ? (
         <div className="map-place-card absolute inset-x-3 bottom-12 z-[600] sm:right-auto sm:bottom-10 sm:left-3 sm:w-96" role="dialog" aria-label={selected.name}>
