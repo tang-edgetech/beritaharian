@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@cendol/ui/tokens.css";
+@import "@cendol/map/map-view.css";
 
 /*
   Public site base styles. Colours, fonts and radii come from packages/ui/src/tokens.css.
@@ -74,5 +75,23 @@
   }
   .page-lead {
     @apply max-w-2xl text-santan-600 dark:text-santan-300;
+  }
+}
+
+/* Star breakdown bars on place pages (<meter>, styled the same in every browser). */
+@layer components {
+  .rating-bar {
+    @apply appearance-none overflow-hidden rounded-full bg-santan-200 dark:bg-santan-800;
+  }
+  .rating-bar::-webkit-meter-bar {
+    @apply rounded-full border-0 bg-santan-200 dark:bg-santan-800;
+  }
+  .rating-bar::-webkit-meter-optimum-value,
+  .rating-bar::-webkit-meter-suboptimum-value,
+  .rating-bar::-webkit-meter-even-less-good-value {
+    @apply rounded-full bg-marigold-400;
+  }
+  .rating-bar::-moz-meter-bar {
+    @apply rounded-full bg-marigold-400;
   }
 }

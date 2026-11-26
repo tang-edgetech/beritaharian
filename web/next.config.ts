@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@cendol/ui", "@cendol/api-client"],
+  transpilePackages: ["@cendol/ui", "@cendol/api-client", "@cendol/map"],
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

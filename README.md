@@ -83,6 +83,19 @@ npm run lint
 php artisan db:seed --class=DemoNewsSeeder
 ```
 
+## Places (Peta Melaka)
+
+- **Public site:** `/places` (list beside a map, filters, open now, near me), `/places/{sector}/{name}`, `/map`. Signed-in readers write reviews, claim a place or suggest one; owners manage their listing under `/business`.
+- **Admin › Places:** places, sectors (each with its own detail fields), ownership claims, and review queues (to check, reported). Settings › Places sets the check-in distance, reviews per day and blocked words.
+- **Roles:** Moderator (`directory.manage`, `directory.claims`, `reviews.moderate`). Owners get the Business owner role when their claim is approved.
+- **Reviews need proof of a visit:** a check-in within 150 m shows at once; a receipt photo waits for a moderator. Receipts and claim documents are private (`backend/storage/app/private/directory/`); receipts are deleted 90 days after the check by the daily schedule.
+- **Maps:** Leaflet with OpenStreetMap tiles, all in `packages/map` (`MapView`). Set `NEXT_PUBLIC_MAP_TILE_URL` to use another tile provider; the address search for staff is `backend/app/Services/Directory/Geocoder.php`. OpenStreetMap's free tiles are fine for testing and light use; move to a paid tile provider or Google Maps before heavy traffic.
+- **Sample places for local testing** (never in production; every name ends in "(sample)"):
+
+```powershell
+php artisan db:seed --class=DemoPlacesSeeder
+```
+
 ## Finance (invoices and bookkeeping)
 
 In the admin under **Finance**. Fill in **Settings › Company** (name, SSM number, address, bank account) before issuing real invoices; those details print on every document.

@@ -1,14 +1,18 @@
-import { ComingSoon } from "@/components/site/coming-soon";
-import { Store } from "lucide-react";
+import { PlacesPageBody, PlacesSkeleton } from "@/components/places/places-page";
+import type { SearchParams } from "@/types/routes";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-export const metadata: Metadata = { title: "Places" };
+export const metadata: Metadata = {
+  title: "Places in Melaka",
+  description: "Hawker stalls, cafés, stays and services across Melaka on one map, with reviews from people who really visited.",
+  alternates: { canonical: "/places" },
+};
 
-export default function PlacesPage() {
+export default function PlacesPage({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <ComingSoon title="Places worth the trip" icon={<Store className="size-7" aria-hidden />}>
-      <p>Hawker stalls, cafés, hotels and more across Melaka, with reviews only from people who really visited.</p>
-      <p>We&apos;re building it now. Until then, read what&apos;s happening in the Food and Events sections.</p>
-    </ComingSoon>
+    <Suspense fallback={<PlacesSkeleton />}>
+      <PlacesPageBody sectorSlug={null} searchParams={searchParams} />
+    </Suspense>
   );
 }

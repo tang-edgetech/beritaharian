@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@cendol/ui/tokens.css";
+@import "@cendol/map/map-view.css";
 
 @custom-variant dark (&:is(.dark *));
 

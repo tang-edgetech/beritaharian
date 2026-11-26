@@ -421,13 +421,13 @@ flowchart LR
           <div class="code-label">Document-oriented: JSON columns</div>
           <ul>
             <li><code>title</code>, <code>body</code>, <code>name</code> stored as <code>{"en":…, "ms":…, "zh":…}</code>. English at launch; BM and Chinese are filled in later with no schema change.</li>
-            <li><code>businesses.attributes</code> holds sector-specific fields, validated by a JSON schema stored on the sector.</li>
+            <li><code>businesses.details</code> holds sector-specific fields (halal, cuisine, star rating...), checked against the field list stored on the sector. Moderators build that list in the admin; fields marked as filters become reader filters.</li>
             <li>Fields we filter on (e.g. <code>halal</code>) get a generated column + index.</li>
             <li><code>settings.value</code>, <code>media.meta</code>, <code>evidence.exif</code> are documents.</li>
           </ul>
         </div>
       </div>
-<pre class="code-block">// sectors.attribute_schema  (Restaurant)          // businesses.attributes  (Restoran Nyonya Makan)
+<pre class="code-block">// sectors.attribute_schema  (Restaurant)          // businesses.details    (Restoran Nyonya Makan)
 {                                                  {
   "halal":      { "type": "boolean" },               "halal": false,
   "cuisine":    { "type": "array", "enum": [...] },  "cuisine": ["peranakan", "malay"],
@@ -549,7 +549,7 @@ erDiagram
     string slug UK
     json description
     string ssm_number
-    json attributes "sector-specific document"
+    json details "sector-specific document"
     json contacts "phone, whatsapp, web, socials"
     enum status "pending, active, suspended"
     boolean is_claimed
@@ -711,16 +711,20 @@ erDiagram
 /news/[category]
 /news/[category]/[slug]
 /alerts                   verified civic alerts
-/directory
-/directory/[sector]
-/directory/[sector]/[slug]
-/directory/[sector]/[slug]/reviews
+/places                   Peta Melaka: list beside a map
+/places/[sector]
+/places/[sector]/[slug]
+/places/[sector]/[slug]/write-review
+/places/[sector]/[slug]/claim
+/places/add               suggest a place
+/map                      full-screen map
+/places/[sector]/[slug]/reviews
 /search?q=&amp;near=&amp;open-now=
 /areas/[area]
 /report                   submit incident
 /account
 /account/reports
-/account/reviews
+/account/reviews           built
 /account/saved
 /account/security
 /business                 owner dashboard
@@ -749,7 +753,9 @@ erDiagram
 /directory/businesses/[id]/[tab]
 /directory/sectors
 /directory/claims
-/reviews/moderation
+/reviews/[queue]           to check, reported, all
+/reviews/[id]
+/settings/directory        check-in distance, limits, blocked words
 /billing/plans
 /billing/subscriptions
 /billing/placements
@@ -1077,7 +1083,7 @@ number_sequences  type, year, next_value   (gap-free numbering, locked per issue
       <div class="phase-list">
         <div class="phase-item"><strong>Phase 0 · Foundation (built)</strong><span>Repo, provisional design tokens from the logo, Laravel API, sign-in with email codes and 2FA, users and roles, settings, audit and sign-in logs, the shared listing component. Still to do: public sign-up pages and tokens from your moodboard.</span></div>
         <div class="phase-item"><strong>Phase 1 · News (built)</strong><span>Newsroom in the admin: stories with a rich-text editor, cover photos (resized to small WebP copies), topics, sources, versions, review queue, drag-ordered categories. Workflow: draft → fact-check by a different person → editor publishes or schedules; breaking news can go live as "Developing" first; live edits need a note and public corrections are shown. Public site: Kopitiam Board home (lead story, "Hari ini" most read, breaking strip, sections, Near you), story pages with sources, corrections and WhatsApp sharing, Latest, sections, places, topics, search, reader sign-up and sign-in, phone tab bar. Pages are cached for a minute and refreshed the moment a story changes. Seeded Melaka districts and localities, and 7 starter categories.</span></div>
-        <div class="phase-item"><strong>Phase 2 · Directory</strong><span>Sectors with attribute schemas, businesses and branches, Peta Melaka map pages on Leaflet and OpenStreetMap, near-me search, claims, reviews and moderation.</span></div>
+        <div class="phase-item"><strong>Phase 2 · Places (built)</strong><span>Sectors with their own detail fields, places with branches, opening hours (past midnight too) and photos. Peta Melaka pages on Leaflet and OpenStreetMap: list beside a clustered map, filters, open now, near me (location never put in the address), full-screen map. Reviews need proof of a visit: check-in within 150 m shows at once, receipt photos wait for a moderator and are deleted 90 days later; automatic checks hold reviews with links, phone numbers or blocked words. Owners claim with an SSM number or document, then edit hours, contacts and photos and reply to reviews, never delete them. Readers can suggest places. Admin: places, sectors, claims, review queues, a Places settings tab.</span></div>
         <div class="phase-item"><strong>Phase 3 · Civic reports</strong><span>Report from the map, evidence storage, verifier queue as list and detail with map preview, public alerts, evidence packs.</span></div>
         <div class="phase-item"><strong>Phase 4 · Billing (built early)</strong><span>Customers, invoices with running numbers, payment checks, receipts and refund vouchers, credit notes, expenses with bills, six finance reports plus customer statements, A4 PDFs and CSV, Company and Billing settings, Finance role. Still to come with Phase 5: emailing documents, overdue reminders, business owners' invoice page, MyInvois submission when required. Real invoices wait for the SSM registration and business bank account.</span></div>
         <div class="phase-item"><strong>Phase 5 · Monetisation</strong><span>Plans, subscriptions, pins and shout-outs with scheduling, all billed through Phase 4. Payment gateways (FPX, cards, TNG eWallet, GrabPay) added as drivers.</span></div>
@@ -1095,6 +1101,7 @@ number_sequences  type, year, next_value   (gap-free numbering, locked per issue
           <tbody>
             <tr><td>Brand</td><td>Cendol Satay. Pin logo confirmed; the bowl and masthead concepts stay in <code>brand/</code> as backups. Domain not fixed yet. SSM and MyIPO checks happen last, just before production.</td></tr>
             <tr><td>Story links</td><td>One stable web address per story (/news/section/headline-words), kept forever once published. If an editor moves a story to another section, the old link redirects.</td></tr>
+            <tr><td>Place links</td><td>Places live under /places/sector/name (the phone tab bar says Places), not /directory as first drafted. Addresses, names and sectors are changed by our team only, so a listing can’t be taken over.</td></tr>
             <tr><td>Names on content</td><td>Journalists' names are always shown on their articles. Members can tick "Hide my name" when sending an incident report: the public sees "A Cendol Satay reader", while verifiers and admins still see who sent it (needed for follow-up and the police evidence pack).</td></tr>
             <tr><td>Business entity</td><td>Sole proprietorship with SSM while starting; Sdn Bhd later when going official.</td></tr>
             <tr><td>Languages</td><td>English default. BM and Chinese added later.</td></tr>

@@ -2,7 +2,7 @@ import { LeadStory, RankedList, StoryCard } from "@/components/news/article-card
 import { toneFor } from "@/components/news/category-tone";
 import { getAreas, getHome } from "@/lib/news";
 import type { HomeSection } from "@cendol/api-client";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, Map as MapIcon, Store, Zap } from "lucide-react";
 import Link from "next/link";
 import { articleHref } from "@/lib/news";
 
@@ -90,7 +90,17 @@ export default async function HomePage() {
           <div className="flex flex-col gap-4 rounded-card bg-pandan-700 px-5 py-6 text-coconut sm:px-8">
             <div className="flex flex-col gap-1">
               <h2 id="area-strip-title" className="font-display text-2xl font-black">Near you</h2>
-              <p className="text-sm text-pandan-100">News by place. The map of places and reports comes next.</p>
+              <p className="text-sm text-pandan-100">News by place, and the places themselves: stalls, stays and services on the map.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/places" className="inline-flex h-10 items-center gap-1.5 rounded-full bg-coconut px-4 text-sm font-extrabold text-gula-900 hover:bg-santan-100">
+                <Store className="size-4" aria-hidden />
+                Browse places
+              </Link>
+              <Link href="/map" className="inline-flex h-10 items-center gap-1.5 rounded-full border border-pandan-300 px-4 text-sm font-bold hover:bg-pandan-600">
+                <MapIcon className="size-4" aria-hidden />
+                Open the map
+              </Link>
             </div>
             <ul className="flex flex-wrap gap-2">
               {areas.flatMap((district) => [

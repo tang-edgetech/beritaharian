@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
   renders in the browser and does not use Cache Components / prerendered shells.
 */
 const nextConfig: NextConfig = {
-  transpilePackages: ["@cendol/ui", "@cendol/api-client"],
+  transpilePackages: ["@cendol/ui", "@cendol/api-client", "@cendol/map"],
   turbopack: {
     rules: {
       "*.css": {

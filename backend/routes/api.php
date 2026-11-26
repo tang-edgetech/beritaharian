@@ -14,7 +14,13 @@ use App\Http\Controllers\Api\Admin\RoleController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Admin\Directory\BusinessController;
+use App\Http\Controllers\Api\Admin\Directory\ClaimController;
+use App\Http\Controllers\Api\Admin\Directory\ReviewController as ReviewModerationController;
+use App\Http\Controllers\Api\Admin\Directory\SectorController;
+use App\Http\Controllers\Api\PlaceAccountController;
 use App\Http\Controllers\Api\Public\NewsController;
+use App\Http\Controllers\Api\Public\PlaceController;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +41,13 @@ Route::prefix('public')->middleware('throttle:public')->group(function () {
     Route::get('categories', [NewsController::class, 'categories']);
     Route::get('areas', [NewsController::class, 'areas']);
     Route::get('tags/{slug}', [NewsController::class, 'tag']);
+
+    // Peta Melaka: places, branches and reviews
+    Route::get('sectors', [PlaceController::class, 'sectors']);
+    Route::get('places', [PlaceController::class, 'index']);
+    Route::get('places/pins', [PlaceController::class, 'pins']);
+    Route::get('places/{slug}', [PlaceController::class, 'show']);
+    Route::get('places/{slug}/reviews', [PlaceController::class, 'reviews']);
 });
 
 Route::prefix('auth')->middleware('throttle:auth')->group(function () {
@@ -66,6 +79,27 @@ Route::middleware(['auth:sanctum', 'abilities:*'])->group(function () {
         Route::get('sessions', [AccountController::class, 'sessions']);
         Route::delete('sessions/others', [AccountController::class, 'revokeOtherSessions']);
         Route::delete('sessions/{id}', [AccountController::class, 'revokeSession'])->whereNumber('id');
+    });
+
+    // Readers and owners: reviews, claims, suggestions and the owner's own listings.
+    Route::prefix('me')->middleware('throttle:60,1')->group(function () {
+        Route::get('places/{slug}', [PlaceAccountController::class, 'status']);
+        Route::post('places/{slug}/reviews', [PlaceAccountController::class, 'writeReview'])->middleware('throttle:10,1,write-review');
+        Route::post('places/{slug}/claims', [PlaceAccountController::class, 'claim'])->middleware('throttle:5,1,claim-place');
+        Route::post('places', [PlaceAccountController::class, 'suggest'])->middleware('throttle:5,1,suggest-place');
+        Route::get('reviews', [PlaceAccountController::class, 'myReviews']);
+        Route::delete('reviews/{review}', [PlaceAccountController::class, 'deleteReview']);
+        Route::post('reviews/{review}/helpful', [PlaceAccountController::class, 'helpful']);
+        Route::post('reviews/{review}/report', [PlaceAccountController::class, 'report']);
+        Route::put('reviews/{review}/reply', [PlaceAccountController::class, 'reply']);
+        Route::delete('reviews/{review}/reply', [PlaceAccountController::class, 'deleteReply']);
+        Route::get('businesses', [PlaceAccountController::class, 'myBusinesses']);
+        Route::get('businesses/{business}', [PlaceAccountController::class, 'myBusiness']);
+        Route::put('businesses/{business}', [PlaceAccountController::class, 'updateMyBusiness']);
+        Route::get('businesses/{business}/reviews', [PlaceAccountController::class, 'businessReviews']);
+        Route::post('businesses/{business}/photos', [PlaceAccountController::class, 'addPhoto'])->middleware('throttle:30,1,owner-photos');
+        Route::put('businesses/{business}/photos/order', [PlaceAccountController::class, 'reorderPhotos']);
+        Route::delete('businesses/{business}/photos/{media}', [PlaceAccountController::class, 'removePhoto']);
     });
 
     Route::prefix('admin')->middleware(['permission:admin.access', 'two-factor.enforced'])->group(function () {
@@ -186,6 +220,51 @@ Route::middleware(['auth:sanctum', 'abilities:*'])->group(function () {
             Route::middleware('permission:billing.reports')->group(function () {
                 Route::get('reports/{type}', [ReportController::class, 'show']);
                 Route::get('customers/{customer}/statement', [CustomerController::class, 'statement'])->withTrashed();
+            });
+        });
+
+        /*
+        | Places directory: directory.manage edits places and sectors, directory.claims approves new places
+        | and ownership claims, reviews.moderate checks receipts, flagged and reported reviews.
+        */
+        Route::prefix('directory')->group(function () {
+            Route::middleware('permission:directory.manage|directory.claims|reviews.moderate')->group(function () {
+                Route::get('summary', [BusinessController::class, 'summary']);
+                Route::get('sectors', [SectorController::class, 'index']);
+                Route::get('areas', [BusinessController::class, 'areas']);
+                Route::get('businesses', [BusinessController::class, 'index']);
+                Route::get('businesses/{business}', [BusinessController::class, 'show'])->withTrashed();
+            });
+            Route::middleware('permission:directory.manage')->group(function () {
+                Route::get('geocode', [BusinessController::class, 'geocode'])->middleware('throttle:30,1');
+                Route::post('businesses', [BusinessController::class, 'store']);
+                Route::post('businesses/bulk', [BusinessController::class, 'bulk']);
+                Route::put('businesses/{business}', [BusinessController::class, 'update']);
+                Route::delete('businesses/{business}', [BusinessController::class, 'destroy']);
+                Route::post('businesses/{business}/restore', [BusinessController::class, 'restore'])->withTrashed();
+                Route::post('businesses/{business}/status', [BusinessController::class, 'status']);
+                Route::post('businesses/{business}/photos', [BusinessController::class, 'addPhoto'])->middleware('throttle:60,1');
+                Route::put('businesses/{business}/photos/order', [BusinessController::class, 'reorderPhotos']);
+                Route::delete('businesses/{business}/photos/{media}', [BusinessController::class, 'removePhoto']);
+                Route::delete('businesses/{business}/members/{user}', [BusinessController::class, 'removeMember']);
+                Route::post('sectors', [SectorController::class, 'store']);
+                Route::put('sectors/order', [SectorController::class, 'reorder']);
+                Route::get('sectors/{sector}', [SectorController::class, 'show']);
+                Route::put('sectors/{sector}', [SectorController::class, 'update']);
+                Route::delete('sectors/{sector}', [SectorController::class, 'destroy']);
+            });
+            Route::middleware('permission:directory.claims')->group(function () {
+                Route::get('claims', [ClaimController::class, 'index']);
+                Route::get('claims/{claim}', [ClaimController::class, 'show']);
+                Route::post('claims/{claim}/decide', [ClaimController::class, 'decide']);
+                Route::get('claims/{claim}/document', [ClaimController::class, 'document']);
+            });
+            Route::middleware('permission:reviews.moderate')->group(function () {
+                Route::get('reviews', [ReviewModerationController::class, 'index']);
+                Route::post('reviews/bulk', [ReviewModerationController::class, 'bulk']);
+                Route::get('reviews/{review}', [ReviewModerationController::class, 'show'])->withTrashed();
+                Route::post('reviews/{review}/moderate', [ReviewModerationController::class, 'moderate']);
+                Route::get('reviews/{review}/receipt', [ReviewModerationController::class, 'receipt'])->withTrashed();
             });
         });
 

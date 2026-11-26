@@ -7,11 +7,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useConfirm } from "@/components/confirm-dialog";
 import { IconAction } from "@/components/icon-action";
 import { useAuth } from "@/lib/auth";
+import { useDirectorySummary } from "@/lib/directory";
 import { initials } from "@/lib/format";
+import type { DirectorySummary } from "@cendol/api-client";
 import {
   Banknote,
   Building2,
+  BadgeCheck,
   ClipboardCheck,
+  MapPinned,
+  MessageSquareText,
+  Shapes,
   ChartColumn,
   FileMinus,
   FileText,
@@ -40,6 +46,8 @@ interface NavItem {
   icon: LucideIcon;
   /** Shown when the person has any of these. */
   permission?: string | string[];
+  /** Shows a count of things waiting, from the directory summary. */
+  count?: (summary: DirectorySummary) => number;
 }
 
 interface NavSection {
@@ -56,6 +64,15 @@ const NAV: NavSection[] = [
       { href: "/news", label: "Stories", icon: Newspaper, permission: ["news.write", "news.edit_any", "news.verify", "news.publish"] },
       { href: "/news/review", label: "Review queue", icon: ClipboardCheck, permission: ["news.verify", "news.publish"] },
       { href: "/news/categories", label: "Categories", icon: Tags, permission: "news.categories" },
+    ],
+  },
+  {
+    title: "Places",
+    items: [
+      { href: "/directory/businesses", label: "Places", icon: MapPinned, permission: ["directory.manage", "directory.claims", "reviews.moderate"], count: (s) => s.new_places },
+      { href: "/directory/sectors", label: "Sectors", icon: Shapes, permission: "directory.manage" },
+      { href: "/directory/claims", label: "Ownership claims", icon: BadgeCheck, permission: "directory.claims", count: (s) => s.claims },
+      { href: "/reviews", label: "Reviews", icon: MessageSquareText, permission: "reviews.moderate", count: (s) => s.reviews_to_check + s.reported_reviews },
     ],
   },
   {
@@ -85,6 +102,7 @@ const NAV: NavSection[] = [
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { can } = useAuth();
+  const summary = useDirectorySummary();
   // the most specific link wins: /news/review lights "Review queue", not "Stories"
   const activeHref = NAV.flatMap((s) => s.items.map((i) => i.href))
     .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
@@ -116,7 +134,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                   ].join(" ")}
                 >
                   <item.icon className="size-4" />
-                  {item.label}
+                  <span className="flex-1">{item.label}</span>
+                  {item.count && summary.data && item.count(summary.data) > 0 ? (
+                    <span className="sidebar-nav-count rounded-full bg-marigold-400 px-1.5 text-xs font-bold text-gula-900 tabular-nums" aria-label={`${item.count(summary.data)} waiting`}>
+                      {item.count(summary.data)}
+                    </span>
+                  ) : null}
                 </Link>
               );
             })}

@@ -12,3 +12,6 @@ Schedule::command('queue:work --stop-when-empty --max-time=55')->everyMinute()->
 // Scheduled stories already show on the site once their time comes; this only tidies their status for the admin lists.
 Schedule::call(fn () => Article::where('status', Article::SCHEDULED)->where('published_at', '<=', now())->update(['status' => Article::PUBLISHED]))
     ->everyMinute()->name('publish-scheduled-articles');
+
+// Receipt photos from reviews are deleted 90 days after a moderator checked them.
+Schedule::call(fn () => app(\App\Services\Directory\ReviewService::class)->purgeReceipts())->dailyAt('03:30')->name('purge-review-receipts');

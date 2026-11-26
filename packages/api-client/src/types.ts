@@ -126,7 +126,7 @@ export interface TwoFactorSetup {
   otpauth_url: string;
 }
 
-export type SettingsGroup = "general" | "security" | "company" | "billing" | "extra";
+export type SettingsGroup = "general" | "security" | "company" | "billing" | "directory" | "extra";
 export type SettingsValues = Record<string, unknown>;
 
 /* ------------------------------------------------------------------ billing

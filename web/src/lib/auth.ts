@@ -1,7 +1,8 @@
 "use client";
 
 import { createApiClient, type AuthResult, type User } from "@cendol/api-client";
-import { useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useSyncExternalStore } from "react";
 
 /*
   Reader sign-in on the public site. The token lives in this browser only (localStorage);
@@ -89,11 +90,42 @@ export function useReader(): Pick<User, "name" | "email"> | null {
   return raw ? JSON.parse(raw) : null;
 }
 
+const RETURN_KEY = "cendol-reader-return";
+
+/** Remember where to come back to after signing in (only paths on this site). */
+export function rememberReturn(path: string) {
+  if (path.startsWith("/") && !path.startsWith("//")) write("session", RETURN_KEY, path);
+}
+
+/** Sends a signed-out reader to sign in, then back to `path`. Returns true when it redirected. */
+export function requireReader(router: { replace: (href: string) => void }, path: string): boolean {
+  if (session.token()) return false;
+  rememberReturn(path);
+  router.replace("/login");
+  return true;
+}
+
+/** For pages that need a signed-in reader: sends others to sign in (and back). True once someone is signed in. */
+export function useRequireReader(path: string): boolean {
+  const router = useRouter();
+  const reader = useReader();
+  useEffect(() => {
+    requireReader(router, path);
+  }, [router, path]);
+  return reader !== null;
+}
+
+function takeReturn(): string {
+  const path = read("session", RETURN_KEY);
+  write("session", RETURN_KEY, null);
+  return path && path.startsWith("/") && !path.startsWith("//") ? path : "/account";
+}
+
 /** What to do after the API answers a sign-in, sign-up or code step. Returns where to go next. */
 export function nextStepAfter(result: AuthResult): string {
   if (result.status === "authenticated") {
     session.signIn(result.token, result.user);
-    return "/account";
+    return takeReturn();
   }
   session.setPending({ status: result.status, token: result.token, destination: result.status === "verification_required" ? result.destination : null });
   return result.status === "verification_required" ? "/verify" : "/two-factor";

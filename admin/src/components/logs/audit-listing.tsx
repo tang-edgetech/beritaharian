@@ -13,6 +13,8 @@ const AREAS = [
   { value: "settings", label: "Settings" },
   { value: "auth", label: "Sign-in & security" },
   { value: "billing", label: "Billing" },
+  { value: "news", label: "Newsroom" },
+  { value: "directory", label: "Places" },
 ];
 
 /** Field names as people say them. */

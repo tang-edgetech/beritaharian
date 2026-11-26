@@ -63,6 +63,13 @@ return [
             'public' => false,
         ],
     ],
+    // Places directory and reviews.
+    'directory' => [
+        'checkin_radius_m' => ['default' => 150, 'rules' => 'required|integer|min:50|max:1000', 'public' => true],
+        'reviews_per_day' => ['default' => 5, 'rules' => 'required|integer|min:1|max:50', 'public' => false],
+        'blocked_words' => ['default' => [], 'rules' => 'array', 'public' => false],
+        'map_center' => ['default' => ['lat' => 2.1960, 'lng' => 102.2480, 'zoom' => 13], 'rules' => 'required|array', 'public' => true],
+    ],
     'extra' => [
         'google_analytics_id' => ['default' => null, 'rules' => 'nullable|string|max:30', 'public' => true],
         'items_per_page_default' => ['default' => 25, 'rules' => 'required|in:10,25,50,100', 'public' => false],

@@ -22,6 +22,8 @@ export function IconAction({ icon: Icon, label, href, onClick, danger, disabled,
     <Button
       variant={danger ? "destructive" : "ghost"}
       size="icon-sm"
+      // never submits a surrounding form
+      type={href && !disabled ? undefined : "button"}
       aria-label={label}
       disabled={disabled}
       onClick={onClick}

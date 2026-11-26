@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Billing\CreditNote;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
+use App\Models\Directory\Business;
+use App\Models\Directory\BusinessClaim;
+use App\Models\Directory\Review;
 use App\Models\LoginHistory;
 use App\Models\News\Article;
 use App\Models\User;
@@ -33,6 +36,14 @@ class LogController extends Controller
                     ->where('subject_id', User::withTrashed()->where('ulid', $v)->value('id'))),
                 AllowedFilter::callback('subject_article', fn (Builder $q, $v) => $q->where('subject_type', Article::class)
                     ->where('subject_id', Article::withTrashed()->where('ulid', $v)->value('id'))),
+                // everything that happened to one place: the listing, its claims and its reviews
+                AllowedFilter::callback('subject_business', function (Builder $q, $v) {
+                    $id = Business::withTrashed()->where('ulid', $v)->value('id');
+                    $q->where(fn (Builder $w) => $w
+                        ->where(fn (Builder $s) => $s->where('subject_type', Business::class)->where('subject_id', $id))
+                        ->orWhere(fn (Builder $s) => $s->where('subject_type', BusinessClaim::class)->whereIn('subject_id', BusinessClaim::where('business_id', $id)->select('id')))
+                        ->orWhere(fn (Builder $s) => $s->where('subject_type', Review::class)->whereIn('subject_id', Review::withTrashed()->where('business_id', $id)->select('id'))));
+                }),
                 // everything that happened to one invoice: the invoice, its payments and its credit notes
                 AllowedFilter::callback('subject_invoice', function (Builder $q, $v) {
                     $invoice = Invoice::where('ulid', $v)->first();

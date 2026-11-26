@@ -15,10 +15,29 @@ const TABS = [
   { key: "security", label: "Security", permission: "settings.manage" },
   { key: "company", label: "Company", permission: "settings.manage" },
   { key: "billing", label: "Billing", permission: "settings.manage" },
+  { key: "directory", label: "Places", permission: "settings.manage" },
   { key: "logs", label: "Logs", permission: "logs.view" },
   { key: "audit", label: "Audit log", permission: "audit.view" },
   { key: "extra", label: "Extra", permission: "settings.manage" },
 ] as const;
+
+const DIRECTORY: SettingSection[] = [
+  {
+    title: "Reviews",
+    description: "Every review needs proof of a visit: a receipt photo checked by a moderator, or a check-in at the place.",
+    fields: [
+      { key: "checkin_radius_m", label: "Check-in distance (metres)", type: "number", hint: "How close a reader must be to the branch for a check-in to count. 150 suits most shops." },
+      { key: "reviews_per_day", label: "Reviews one person can write per day", type: "number" },
+      {
+        key: "blocked_words",
+        label: "Blocked words",
+        type: "lines",
+        placeholder: "One word or phrase per line",
+        hint: "Reviews using these are held for a moderator to read, not rejected.",
+      },
+    ],
+  },
+];
 
 const GENERAL: SettingSection[] = [
   {
@@ -276,6 +295,8 @@ export default function SettingsTabPage() {
         <SettingsForm group="company" sections={COMPANY} />
       ) : tab === "billing" ? (
         <SettingsForm group="billing" sections={BILLING} />
+      ) : tab === "directory" ? (
+        <SettingsForm group="directory" sections={DIRECTORY} />
       ) : tab === "logs" ? (
         <LoginListing />
       ) : tab === "audit" ? (
